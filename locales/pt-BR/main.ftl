@@ -1,0 +1,100 @@
+tab-home = Início
+tab-games = Jogos
+tab-apps = Apps
+tab-settings = Ajustes
+greeting-morning = Bom dia
+greeting-afternoon = Boa tarde
+greeting-evening = Boa noite
+greeting-night = Ainda acordado?
+home-jump-back = Continuar jogando
+home-your-apps = Seus apps
+home-empty-title = Nenhum jogo ainda
+home-empty-body = Instale um jogo pela Steam ou Epic e ele aparece aqui sozinho.
+action-play = Jogar
+action-open = Abrir
+action-back = Voltar
+action-select = Escolher
+action-more = Mais
+action-search = Buscar
+action-menu = Menu
+action-tabs = Trocar
+action-continue = Continuar
+action-done = Pronto
+action-cancel = Cancelar
+games-count = { $count ->
+    [one] 1 jogo
+   *[other] { $count } jogos
+}
+filter-all = Todos
+filter-steam = Steam
+filter-epic = Epic
+filter-recent = Jogados há pouco
+games-search = Encontrar um jogo
+games-none = Nada com esse nome.
+detail-last-played = Jogado { $when }
+detail-never = Ainda não jogado
+detail-pin = Adicionar ao Início
+detail-unpin = Tirar do Início
+detail-files = Ver arquivos
+when-today = hoje
+when-yesterday = ontem
+when-days = { $n ->
+    [one] há 1 dia
+   *[other] há { $n } dias
+}
+apps-title = Apps
+apps-tip = Nos apps, o controle funciona como mouse. Aperte Start para voltar.
+apps-files = Arquivos
+quick-title = Menu rápido
+quick-sound = Som
+quick-brightness = Brilho
+quick-mouse = Controle como mouse
+quick-return = Voltar para { $name }
+quick-close = Fechar { $name }
+quick-screenshot = Tirar print
+quick-keyboard = Teclado
+quick-power = Energia
+on = Sim
+off = Não
+power-title = Energia
+power-sleep = Suspender
+power-restart = Reiniciar
+power-off = Desligar
+power-desktop = Ir para a área de trabalho
+set-language = Idioma
+set-look = Visual
+set-theme = Tema
+theme-dark = Escuro
+theme-light = Claro
+set-motion = Animações
+motion-full = Todas
+motion-less = Menos
+set-sounds = Sons dos botões
+set-controller = Controle
+set-swap = Trocar A e B
+set-speed = Velocidade do mouse
+set-rumble = Vibração
+set-system = Sistema
+set-startup = Abrir o JoyOS quando o PC ligar
+set-rescan = Procurar jogos novos
+set-about = Sobre
+about-line = JoyOS { $version }. Feito para o sofá.
+pad-connected = { $name } está pronto
+pad-none = Nenhum controle. O teclado também funciona.
+toast-starting = Abrindo { $name }
+toast-failed = Não deu para abrir { $name }
+toast-shot = Print salvo em Imagens
+toast-found = { $count ->
+    [one] 1 jogo encontrado
+   *[other] { $count } jogos encontrados
+}
+key-space = Espaço
+key-delete = Apagar
+key-shift = Shift
+hello = Olá
+setup-language = Escolha seu idioma
+setup-pad-title = Pegue o controle
+setup-pad-body = Aperte A para continuar. O teclado também funciona.
+setup-finding = Procurando seus jogos
+setup-ready = Tudo pronto
+setup-start = Bora

@@ -1,0 +1,100 @@
+tab-home = Inicio
+tab-games = Juegos
+tab-apps = Apps
+tab-settings = Ajustes
+greeting-morning = Buenos días
+greeting-afternoon = Buenas tardes
+greeting-evening = Buenas noches
+greeting-night = ¿Todavía despierto?
+home-jump-back = Sigue jugando
+home-your-apps = Tus apps
+home-empty-title = Aún no hay juegos
+home-empty-body = Instala un juego con Steam o Epic y aparecerá aquí solo.
+action-play = Jugar
+action-open = Abrir
+action-back = Atrás
+action-select = Elegir
+action-more = Más
+action-search = Buscar
+action-menu = Menú
+action-tabs = Cambiar
+action-continue = Seguir
+action-done = Listo
+action-cancel = Cancelar
+games-count = { $count ->
+    [one] 1 juego
+   *[other] { $count } juegos
+}
+filter-all = Todos
+filter-steam = Steam
+filter-epic = Epic
+filter-recent = Jugados hace poco
+games-search = Busca un juego
+games-none = No hay nada con ese nombre.
+detail-last-played = Jugado { $when }
+detail-never = Aún sin jugar
+detail-pin = Añadir a Inicio
+detail-unpin = Quitar de Inicio
+detail-files = Ver archivos
+when-today = hoy
+when-yesterday = ayer
+when-days = { $n ->
+    [one] hace 1 día
+   *[other] hace { $n } días
+}
+apps-title = Apps
+apps-tip = En las apps, el mando funciona como ratón. Pulsa Start para volver.
+apps-files = Archivos
+quick-title = Menú rápido
+quick-sound = Sonido
+quick-brightness = Brillo
+quick-mouse = Mando como ratón
+quick-return = Volver a { $name }
+quick-close = Cerrar { $name }
+quick-screenshot = Hacer captura
+quick-keyboard = Teclado
+quick-power = Apagado
+on = Sí
+off = No
+power-title = Apagado
+power-sleep = Suspender
+power-restart = Reiniciar
+power-off = Apagar
+power-desktop = Ir al escritorio
+set-language = Idioma
+set-look = Aspecto
+set-theme = Tema
+theme-dark = Oscuro
+theme-light = Claro
+set-motion = Animaciones
+motion-full = Todas
+motion-less = Menos
+set-sounds = Sonidos de botones
+set-controller = Mando
+set-swap = Cambiar A y B
+set-speed = Velocidad del ratón
+set-rumble = Vibración
+set-system = Sistema
+set-startup = Abrir JoyOS al encender el PC
+set-rescan = Buscar juegos nuevos
+set-about = Acerca de
+about-line = JoyOS { $version }. Hecho para el sofá.
+pad-connected = { $name } está listo
+pad-none = No hay mando. También puedes usar el teclado.
+toast-starting = Abriendo { $name }
+toast-failed = No se pudo abrir { $name }
+toast-shot = Captura guardada en Imágenes
+toast-found = { $count ->
+    [one] 1 juego encontrado
+   *[other] { $count } juegos encontrados
+}
+key-space = Espacio
+key-delete = Borrar
+key-shift = Mayús
+hello = Hola
+setup-language = Elige tu idioma
+setup-pad-title = Coge el mando
+setup-pad-body = Pulsa A para seguir. El teclado también sirve.
+setup-finding = Buscando tus juegos
+setup-ready = Todo listo
+setup-start = Vamos

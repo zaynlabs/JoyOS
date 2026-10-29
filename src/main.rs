@@ -1,0 +1,57 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+mod app;
+mod i18n;
+mod input;
+mod library;
+mod protocol;
+mod settings;
+mod system;
+mod ui;
+
+use dioxus::desktop::tao::window::Fullscreen;
+use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
+use tracing_subscriber::EnvFilter;
+
+const CSS: &str = include_str!("../assets/css/joy.css");
+
+fn main() {
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("joyos=info")))
+        .init();
+
+    let settings = settings::Settings::load();
+    i18n::set_language(settings.language.as_deref().and_then(i18n::index_of).unwrap_or_else(i18n::detect));
+    app::apply_to_input(&settings);
+    app::hand_over_input(input::start());
+
+    // `--windowed` is handy while working on JoyOS itself.
+    let windowed = std::env::args().any(|a| a == "--windowed");
+    let mut window = WindowBuilder::new().with_title("JoyOS").with_decorations(windowed);
+    window = if windowed {
+        window.with_inner_size(LogicalSize::new(1600.0, 900.0))
+    } else {
+        window.with_fullscreen(Some(Fullscreen::Borderless(None)))
+    };
+
+    let data_dir = directories::ProjectDirs::from("app", "JoyOS", "JoyOS").map(|d| d.data_local_dir().join("webview"));
+    // Button sounds play from controller input, which isn't a "user gesture" to the browser.
+    let mut browser_args = String::from("--autoplay-policy=no-user-gesture-required");
+    if cfg!(debug_assertions) {
+        // Lets dev tools (and tools/cdp.mjs) attach to the page in debug builds.
+        browser_args.push_str(" --remote-debugging-port=9333");
+    }
+    let mut config = Config::new()
+        .with_window(window)
+        .with_menu(None)
+        .with_disable_context_menu(true)
+        .with_background_color((11, 11, 13, 255))
+        .with_custom_head(format!("<style>{CSS}</style>"))
+        .with_custom_protocol("joy", protocol::handle)
+        .with_windows_browser_args(browser_args);
+    if let Some(dir) = data_dir {
+        config = config.with_data_directory(dir);
+    }
+
+    dioxus::LaunchBuilder::desktop().with_cfg(config).launch(app::App);
+}

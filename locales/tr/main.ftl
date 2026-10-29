@@ -1,0 +1,100 @@
+tab-home = Ana sayfa
+tab-games = Oyunlar
+tab-apps = Uygulamalar
+tab-settings = Ayarlar
+greeting-morning = Günaydın
+greeting-afternoon = İyi günler
+greeting-evening = İyi akşamlar
+greeting-night = Hâlâ uyanık mısın?
+home-jump-back = Kaldığın yerden
+home-your-apps = Uygulamaların
+home-empty-title = Henüz oyun yok
+home-empty-body = Steam ya da Epic ile bir oyun kur, burada kendiliğinden görünür.
+action-play = Oyna
+action-open = Aç
+action-back = Geri
+action-select = Seç
+action-more = Daha fazla
+action-search = Ara
+action-menu = Menü
+action-tabs = Değiştir
+action-continue = Devam
+action-done = Tamam
+action-cancel = Vazgeç
+games-count = { $count ->
+    [one] 1 oyun
+   *[other] { $count } oyun
+}
+filter-all = Tümü
+filter-steam = Steam
+filter-epic = Epic
+filter-recent = Son oynananlar
+games-search = Oyun bul
+games-none = Eşleşen bir şey yok.
+detail-last-played = Son oynama: { $when }
+detail-never = Henüz oynanmadı
+detail-pin = Ana sayfaya ekle
+detail-unpin = Ana sayfadan kaldır
+detail-files = Dosyaları göster
+when-today = bugün
+when-yesterday = dün
+when-days = { $n ->
+    [one] 1 gün önce
+   *[other] { $n } gün önce
+}
+apps-title = Uygulamalar
+apps-tip = Uygulamalarda kumanda fare gibi çalışır. Geri dönmek için Start’a bas.
+apps-files = Dosyalar
+quick-title = Hızlı menü
+quick-sound = Ses
+quick-brightness = Parlaklık
+quick-mouse = Kumandayı fare yap
+quick-return = { $name } oyununa dön
+quick-close = { $name } kapat
+quick-screenshot = Ekran görüntüsü al
+quick-keyboard = Klavye
+quick-power = Güç
+on = Açık
+off = Kapalı
+power-title = Güç
+power-sleep = Uyku
+power-restart = Yeniden başlat
+power-off = Kapat
+power-desktop = Masaüstüne git
+set-language = Dil
+set-look = Görünüm
+set-theme = Tema
+theme-dark = Koyu
+theme-light = Açık
+set-motion = Hareket
+motion-full = Tam
+motion-less = Az
+set-sounds = Tuş sesleri
+set-controller = Kumanda
+set-swap = A ile B’yi değiştir
+set-speed = Fare hızı
+set-rumble = Titreşim
+set-system = Sistem
+set-startup = Bilgisayar açılınca JoyOS’u aç
+set-rescan = Yeni oyunları bul
+set-about = Hakkında
+about-line = JoyOS { $version }. Koltuk için yapıldı.
+pad-connected = { $name } hazır
+pad-none = Kumanda bulunamadı. Klavye de olur.
+toast-starting = { $name } açılıyor
+toast-failed = { $name } açılamadı
+toast-shot = Ekran görüntüsü Resimler’e kaydedildi
+toast-found = { $count ->
+    [one] 1 oyun bulundu
+   *[other] { $count } oyun bulundu
+}
+key-space = Boşluk
+key-delete = Sil
+key-shift = Shift
+hello = Merhaba
+setup-language = Dilini seç
+setup-pad-title = Kumandanı al
+setup-pad-body = Devam etmek için A’ya bas. Klavye de olur.
+setup-finding = Oyunların aranıyor
+setup-ready = Her şey hazır
+setup-start = Hadi başlayalım

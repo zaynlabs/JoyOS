@@ -1,0 +1,100 @@
+tab-home = होम
+tab-games = गेम
+tab-apps = ऐप
+tab-settings = सेटिंग
+greeting-morning = सुप्रभात
+greeting-afternoon = नमस्ते
+greeting-evening = शुभ संध्या
+greeting-night = अभी तक जागे हो?
+home-jump-back = फिर से खेलें
+home-your-apps = आपके ऐप
+home-empty-title = अभी कोई गेम नहीं
+home-empty-body = Steam या Epic से कोई गेम इंस्टॉल करें, वह यहाँ अपने आप दिखेगा।
+action-play = खेलें
+action-open = खोलें
+action-back = पीछे
+action-select = चुनें
+action-more = और
+action-search = खोजें
+action-menu = मेन्यू
+action-tabs = बदलें
+action-continue = आगे बढ़ें
+action-done = हो गया
+action-cancel = रद्द करें
+games-count = { $count ->
+    [one] 1 गेम
+   *[other] { $count } गेम
+}
+filter-all = सभी
+filter-steam = Steam
+filter-epic = Epic
+filter-recent = हाल में खेले
+games-search = गेम खोजें
+games-none = कुछ नहीं मिला।
+detail-last-played = आख़िरी बार खेला { $when }
+detail-never = अभी तक नहीं खेला
+detail-pin = होम पर जोड़ें
+detail-unpin = होम से हटाएँ
+detail-files = फ़ाइलें दिखाएँ
+when-today = आज
+when-yesterday = कल
+when-days = { $n ->
+    [one] 1 दिन पहले
+   *[other] { $n } दिन पहले
+}
+apps-title = ऐप
+apps-tip = ऐप में आपका कंट्रोलर माउस की तरह चलता है। वापस आने के लिए Start दबाएँ।
+apps-files = फ़ाइलें
+quick-title = झटपट मेन्यू
+quick-sound = आवाज़
+quick-brightness = रोशनी
+quick-mouse = कंट्रोलर को माउस बनाएँ
+quick-return = { $name } पर लौटें
+quick-close = { $name } बंद करें
+quick-screenshot = स्क्रीनशॉट लें
+quick-keyboard = कीबोर्ड
+quick-power = पावर
+on = चालू
+off = बंद
+power-title = पावर
+power-sleep = स्लीप
+power-restart = फिर से चालू करें
+power-off = बंद करें
+power-desktop = डेस्कटॉप पर जाएँ
+set-language = भाषा
+set-look = रूप
+set-theme = थीम
+theme-dark = गहरा
+theme-light = हल्का
+set-motion = एनिमेशन
+motion-full = पूरा
+motion-less = कम
+set-sounds = बटन की आवाज़
+set-controller = कंट्रोलर
+set-swap = A और B बदलें
+set-speed = माउस की रफ़्तार
+set-rumble = कंपन
+set-system = सिस्टम
+set-startup = PC चालू होते ही JoyOS खोलें
+set-rescan = नए गेम खोजें
+set-about = जानकारी
+about-line = JoyOS { $version }. सोफ़े के लिए बना।
+pad-connected = { $name } तैयार है
+pad-none = कोई कंट्रोलर नहीं मिला। कीबोर्ड भी चलेगा।
+toast-starting = { $name } खुल रहा है
+toast-failed = { $name } नहीं खुल सका
+toast-shot = स्क्रीनशॉट Pictures में सेव हुआ
+toast-found = { $count ->
+    [one] 1 गेम मिला
+   *[other] { $count } गेम मिले
+}
+key-space = स्पेस
+key-delete = मिटाएँ
+key-shift = Shift
+hello = नमस्ते
+setup-language = अपनी भाषा चुनें
+setup-pad-title = कंट्रोलर उठाइए
+setup-pad-body = आगे बढ़ने के लिए A दबाएँ। कीबोर्ड भी चलेगा।
+setup-finding = आपके गेम खोजे जा रहे हैं
+setup-ready = सब तैयार है
+setup-start = चलिए शुरू करें

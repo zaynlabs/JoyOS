@@ -1,0 +1,100 @@
+tab-home = Accueil
+tab-games = Jeux
+tab-apps = Apps
+tab-settings = Réglages
+greeting-morning = Bonjour
+greeting-afternoon = Bon après-midi
+greeting-evening = Bonsoir
+greeting-night = Encore debout ?
+home-jump-back = Reprendre
+home-your-apps = Vos apps
+home-empty-title = Pas encore de jeux
+home-empty-body = Installez un jeu avec Steam ou Epic, il apparaîtra ici tout seul.
+action-play = Jouer
+action-open = Ouvrir
+action-back = Retour
+action-select = Choisir
+action-more = Plus
+action-search = Chercher
+action-menu = Menu
+action-tabs = Changer
+action-continue = Continuer
+action-done = Terminé
+action-cancel = Annuler
+games-count = { $count ->
+    [one] 1 jeu
+   *[other] { $count } jeux
+}
+filter-all = Tous
+filter-steam = Steam
+filter-epic = Epic
+filter-recent = Joués récemment
+games-search = Trouver un jeu
+games-none = Rien ne correspond.
+detail-last-played = Joué { $when }
+detail-never = Pas encore joué
+detail-pin = Ajouter à l’accueil
+detail-unpin = Retirer de l’accueil
+detail-files = Voir les fichiers
+when-today = aujourd’hui
+when-yesterday = hier
+when-days = { $n ->
+    [one] il y a 1 jour
+   *[other] il y a { $n } jours
+}
+apps-title = Apps
+apps-tip = Dans les apps, la manette sert de souris. Appuyez sur Start pour revenir.
+apps-files = Fichiers
+quick-title = Menu rapide
+quick-sound = Son
+quick-brightness = Luminosité
+quick-mouse = Manette comme souris
+quick-return = Revenir à { $name }
+quick-close = Fermer { $name }
+quick-screenshot = Capture d’écran
+quick-keyboard = Clavier
+quick-power = Marche/Arrêt
+on = Oui
+off = Non
+power-title = Marche/Arrêt
+power-sleep = Veille
+power-restart = Redémarrer
+power-off = Éteindre
+power-desktop = Aller au bureau
+set-language = Langue
+set-look = Apparence
+set-theme = Thème
+theme-dark = Sombre
+theme-light = Clair
+set-motion = Animations
+motion-full = Toutes
+motion-less = Moins
+set-sounds = Sons des boutons
+set-controller = Manette
+set-swap = Inverser A et B
+set-speed = Vitesse de la souris
+set-rumble = Vibrations
+set-system = Système
+set-startup = Ouvrir JoyOS au démarrage du PC
+set-rescan = Chercher de nouveaux jeux
+set-about = À propos
+about-line = JoyOS { $version }. Fait pour le canapé.
+pad-connected = { $name } est prêt
+pad-none = Aucune manette. Le clavier marche aussi.
+toast-starting = Lancement de { $name }
+toast-failed = Impossible d’ouvrir { $name }
+toast-shot = Capture enregistrée dans Images
+toast-found = { $count ->
+    [one] 1 jeu trouvé
+   *[other] { $count } jeux trouvés
+}
+key-space = Espace
+key-delete = Effacer
+key-shift = Maj
+hello = Bonjour
+setup-language = Choisissez votre langue
+setup-pad-title = Prenez votre manette
+setup-pad-body = Appuyez sur A pour continuer. Le clavier marche aussi.
+setup-finding = Recherche de vos jeux
+setup-ready = Tout est prêt
+setup-start = C’est parti

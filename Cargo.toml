@@ -2,6 +2,11 @@
 name = "joyos"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
+description = "A full-screen, controller-first shell for Windows"
+license = "MIT"
+repository = "https://github.com/zaynlabs/JoyOS"
+readme = "README.md"
 
 [dependencies]
 anyhow = "1"

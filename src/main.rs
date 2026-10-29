@@ -10,11 +10,13 @@ mod settings;
 mod system;
 mod ui;
 
-use dioxus::desktop::tao::window::Fullscreen;
+use dioxus::desktop::tao::window::{Fullscreen, Icon};
 use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
+use image::imageops::FilterType;
 use tracing_subscriber::EnvFilter;
 
 const CSS: &str = include_str!("../assets/css/joy.css");
+const ICON: &[u8] = include_bytes!("../assets/images/icon.png");
 
 fn main() {
     tracing_subscriber::fmt()
@@ -28,7 +30,7 @@ fn main() {
 
     // `--windowed` is handy while working on JoyOS itself.
     let windowed = std::env::args().any(|a| a == "--windowed");
-    let mut window = WindowBuilder::new().with_title("JoyOS").with_decorations(windowed);
+    let mut window = WindowBuilder::new().with_title("JoyOS").with_decorations(windowed).with_window_icon(window_icon());
     window = if windowed {
         window.with_inner_size(LogicalSize::new(1600.0, 900.0))
     } else {
@@ -36,6 +38,13 @@ fn main() {
     };
 
     dioxus::LaunchBuilder::desktop().with_cfg(config(window, (11, 11, 13, 255), "")).launch(app::App);
+}
+
+/// The title bar and taskbar icon. The .exe gets the same artwork from build.rs.
+fn window_icon() -> Option<Icon> {
+    let rgba = image::load_from_memory(ICON).ok()?.resize(256, 256, FilterType::Lanczos3).into_rgba8();
+    let (width, height) = rgba.dimensions();
+    Icon::from_rgba(rgba.into_raw(), width, height).ok()
 }
 
 /// Shared by every JoyOS window. Windows in one process share a browser, and

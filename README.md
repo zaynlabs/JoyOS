@@ -74,7 +74,3 @@ cargo clippy --all-targets -- -D warnings
 Debug builds open a DevTools port on `127.0.0.1:9333`. Point a Chromium-based DevTools client (such as Edge's `edge://inspect`) at it to inspect the interface.
 
 Fonts: Inter and Instrument Serif, both under the SIL Open Font License. The license files are in `assets/fonts/`.
-
-## License
-
-JoyOS is released under the [MIT License](LICENSE).

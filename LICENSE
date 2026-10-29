@@ -1,21 +1,26 @@
-MIT License
+# JoyOS License
 
-Copyright (c) 2026 Zayn Labs
+Copyright (c) 2026 Zayn Labs. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Permission
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+You may view, use, and modify the JoyOS software and its source code for private purposes, including personal use, learning, and experimentation.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## Restrictions
+
+You may not:
+
+1. **Distribute copies.** You may not distribute, publish, sublicense, or otherwise share copies of the software, in source or binary form, modified or unmodified, with or without charge.
+2. **Make money from it.** You may not sell the software, charge for access to it, or use it in any product, service, or offering that generates revenue, without prior written permission from Zayn Labs.
+
+## Ownership
+
+This license grants no ownership rights. All rights not expressly granted in this license are reserved by Zayn Labs.
+
+## Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL ZAYN LABS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Contact
+
+To request permission for any use not covered above, contact Zayn Labs.

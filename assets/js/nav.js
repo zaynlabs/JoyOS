@@ -3,11 +3,14 @@
 // need hand-written focus maps. Anything with [data-nav] can take focus.
 //
 // Rust → JS: {t:"move",d}, {t:"activate"}, {t:"page",d}, {t:"tilt",x,y}, {t:"prefs",...}, {t:"sound",s}
-// JS → Rust: {t:"back"}, {t:"tab",d}, {t:"quick"}, {t:"more"}, {t:"search"}, {t:"slide",id,d}, {t:"type",k}
+// JS → Rust: {t:"back"}, {t:"tab",d}, {t:"quick"}, {t:"more"}, {t:"search"}, {t:"slide",id,d}, {t:"type",k}, {t:"keyboard"}
 
 // Script errors show up in JoyOS's own log instead of disappearing.
 window.addEventListener("error", (e) => dioxus.send({ t: "log", m: `${e.message} @ ${e.filename}:${e.lineno}` }));
 window.addEventListener("unhandledrejection", (e) => dioxus.send({ t: "log", m: String(e.reason) }));
+
+// For tools/cdp.mjs, which can't reach the eval's own `dioxus` handle.
+window.joySend = (msg) => dioxus.send(msg);
 
 const prefs = { sounds: true, reduced: false, lang: "en", rtl: false };
 const memory = new Map();
@@ -89,8 +92,19 @@ function settle() {
 }
 
 // ---------- moving ----------
+// The floating keyboard's window never takes focus, so :focus never matches
+// there. Mirror it as a class that styles can use.
+let marked = null;
+function mark(el) {
+  if (marked === el) return;
+  marked?.classList.remove("is-focus");
+  marked = el;
+  el?.classList.add("is-focus");
+}
+
 function place(el, withSound = true) {
   el.focus({ preventScroll: true });
+  mark(el);
   reveal(el);
   if (withSound) sound("tick");
 }
@@ -217,6 +231,7 @@ new MutationObserver(() => { settle(); tickClock(); }).observe(document.body, { 
 document.addEventListener("focusin", (e) => {
   const el = e.target;
   if (!(el instanceof HTMLElement) || !el.matches("[data-nav]")) return;
+  mark(el);
   const root = scope();
   if (root.contains(el)) memory.set(scopeKey(root), el);
   const row = el.closest("[data-row]");
@@ -226,7 +241,7 @@ document.addEventListener("focusin", (e) => {
 // The mouse works too: hovering focuses, like moving with the stick.
 document.addEventListener("pointermove", (e) => {
   const el = e.target instanceof Element ? e.target.closest("[data-nav]") : null;
-  if (el && el !== document.activeElement && scope().contains(el)) el.focus({ preventScroll: true });
+  if (el && el !== document.activeElement && scope().contains(el)) { el.focus({ preventScroll: true }); mark(el); }
 });
 
 const KEY_DIRS = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };

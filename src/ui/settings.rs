@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use super::{Icon, sliders::Slider};
 use crate::app::{Layer, Shell};
 use crate::i18n::{self, LANGUAGES};
-use crate::settings::Theme;
+use crate::settings::{Keyboard, Theme};
 use crate::system::startup;
 use crate::t;
 
@@ -144,6 +144,13 @@ fn Controller() -> Element {
         }
         Toggle { label: t!("set-swap"), on: s.swap_ab, onclick: move |_| shell.change(|s| s.swap_ab = !s.swap_ab) }
         Toggle { label: t!("set-rumble"), on: s.rumble, onclick: move |_| shell.change(|s| s.rumble = !s.rumble) }
+        div { class: "option",
+            span { class: "name", {t!("set-keyboard")} }
+            div { class: "choices", "data-row": "keyboard",
+                Choice { label: t!("keyboard-joy"), on: s.keyboard == Keyboard::Joy, onclick: move |_| shell.change(|s| s.keyboard = Keyboard::Joy) }
+                Choice { label: t!("keyboard-windows"), on: s.keyboard == Keyboard::Windows, onclick: move |_| shell.change(|s| s.keyboard = Keyboard::Windows) }
+            }
+        }
         div { class: "option",
             Slider { id: "mouse-speed", icon: "mouse", label: t!("set-speed"), value: s.mouse_speed as f32 / 10.0, shown: format!("{}", s.mouse_speed) }
         }

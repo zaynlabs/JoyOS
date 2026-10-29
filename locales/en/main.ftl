@@ -91,6 +91,9 @@ set-controller = Controller
 set-swap = Swap A and B
 set-speed = Mouse speed
 set-rumble = Vibration
+set-keyboard = On-screen keyboard
+keyboard-joy = JoyOS
+keyboard-windows = Windows
 set-system = System
 set-startup = Open JoyOS when the PC starts
 set-rescan = Look for new games
@@ -114,6 +117,8 @@ toast-found = { $count ->
 key-space = Space
 key-delete = Delete
 key-shift = Shift
+key-enter = Enter
+osk-caret = Move
 
 ## First run
 hello = Hello

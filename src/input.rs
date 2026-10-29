@@ -1,6 +1,7 @@
 //! The controller thread. It turns raw gamepad state into what the shell needs:
 //! menu moves with console-style repeat when JoyOS is in front, and mouse and
-//! keyboard input when another app is.
+//! keyboard input when another app is. While the on-screen keyboard is up over
+//! another app, the controller drives the keyboard instead of the mouse.
 
 use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
 use std::time::{Duration, Instant};
@@ -12,7 +13,7 @@ use windows::Win32::UI::Input::KeyboardAndMouse::{
     VIRTUAL_KEY, VK_BROWSER_BACK, VK_BROWSER_FORWARD, VK_DOWN, VK_ESCAPE, VK_LEFT, VK_RETURN, VK_RIGHT, VK_UP,
 };
 
-use crate::system::{inject, launch, window};
+use crate::system::{inject, textfield, window};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Dir {
@@ -66,6 +67,9 @@ pub enum InputEvent {
     Tilt(f32, f32),
     /// Open the quick menu and bring JoyOS to the front, from anywhere.
     Summon,
+    /// Show the on-screen keyboard over the app in front. `toggle` hides it if it's
+    /// already up; picking a text box only ever shows it.
+    Keyboard { toggle: bool },
     Connected(String, Family),
     Disconnected,
 }
@@ -76,6 +80,8 @@ pub struct Shared {
     pub swap_ab: AtomicBool,
     pub mouse_speed: AtomicU8,
     pub rumble: AtomicBool,
+    /// JoyOS's own keyboard is up over another app.
+    pub typing: AtomicBool,
     rumble_now: AtomicBool,
 }
 
@@ -84,6 +90,7 @@ pub static SHARED: Shared = Shared {
     swap_ab: AtomicBool::new(false),
     mouse_speed: AtomicU8::new(5),
     rumble: AtomicBool::new(true),
+    typing: AtomicBool::new(false),
     rumble_now: AtomicBool::new(false),
 };
 
@@ -211,7 +218,8 @@ fn run(tx: UnboundedSender<InputEvent>) {
 
     loop {
         let in_front = window::we_are_in_front();
-        let mouse_mode = !in_front && SHARED.mouse_mode.load(Ordering::Relaxed);
+        let typing = !in_front && SHARED.typing.load(Ordering::Relaxed);
+        let mouse_mode = !in_front && !typing && SHARED.mouse_mode.load(Ordering::Relaxed);
         let swap = SHARED.swap_ab.load(Ordering::Relaxed);
 
         while let Some(ev) = gilrs.next_event() {
@@ -241,7 +249,7 @@ fn run(tx: UnboundedSender<InputEvent>) {
                         send(InputEvent::Summon);
                         continue;
                     }
-                    if in_front {
+                    if in_front || typing {
                         if let Some(p) = map_button(button, swap) {
                             send(InputEvent::Press(p));
                         }
@@ -266,17 +274,22 @@ fn run(tx: UnboundedSender<InputEvent>) {
                             inject::key(k, true);
                             keys_held.push((button, k));
                         } else if button == Button::North {
-                            launch::touch_keyboard();
+                            send(InputEvent::Keyboard { toggle: true });
                         }
                     }
                 }
                 EventType::ButtonReleased(button, _) => {
+                    let mut clicked = false;
                     mouse_held.retain(|&(b, c)| {
                         if b == button {
                             inject::button(c, false);
+                            clicked |= c == inject::MouseButton::Left;
                         }
                         b != button
                     });
+                    if clicked {
+                        offer_keyboard(tx.clone());
+                    }
                     keys_held.retain(|&(b, k)| {
                         if b == button {
                             inject::key(k, false);
@@ -296,7 +309,7 @@ fn run(tx: UnboundedSender<InputEvent>) {
             let (lx, ly) = (pad.value(Axis::LeftStickX), pad.value(Axis::LeftStickY));
             let (rx, ry) = (pad.value(Axis::RightStickX), pad.value(Axis::RightStickY));
 
-            if in_front {
+            if in_front || typing {
                 let dpad = [
                     (Button::DPadUp, Dir::Up),
                     (Button::DPadDown, Dir::Down),
@@ -310,7 +323,7 @@ fn run(tx: UnboundedSender<InputEvent>) {
                     send(InputEvent::Move(dir));
                 }
 
-                let tilt = (shape(rx), shape(ry));
+                let tilt = if typing { (0.0, 0.0) } else { (shape(rx), shape(ry)) };
                 let changed = (tilt.0 - last_tilt.0).abs() + (tilt.1 - last_tilt.1).abs() > 0.03;
                 let settled = tilt == (0.0, 0.0) && last_tilt != (0.0, 0.0);
                 if (changed && now.duration_since(last_tilt_at) > Duration::from_millis(30)) || settled {
@@ -369,6 +382,17 @@ fn run(tx: UnboundedSender<InputEvent>) {
 
         std::thread::sleep(TICK);
     }
+}
+
+/// After a click, opens the keyboard if the click landed in a text box. Focus
+/// takes a moment to move, and UI Automation can be slow, so this gets its own thread.
+fn offer_keyboard(tx: UnboundedSender<InputEvent>) {
+    std::thread::spawn(move || {
+        std::thread::sleep(Duration::from_millis(150));
+        if textfield::focused() {
+            let _ = tx.unbounded_send(InputEvent::Keyboard { toggle: false });
+        }
+    });
 }
 
 #[cfg(test)]

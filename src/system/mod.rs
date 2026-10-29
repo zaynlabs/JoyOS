@@ -9,6 +9,7 @@ pub mod power;
 pub mod registry;
 pub mod startup;
 pub mod status;
+pub mod textfield;
 pub mod window;
 
 use std::os::windows::process::CommandExt;

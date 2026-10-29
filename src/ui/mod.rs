@@ -98,10 +98,19 @@ pub fn Icon(name: &'static str) -> Element {
 
 // ---------- controller glyphs ----------
 
+/// The pad family for windows that have no `Shell`, like the floating keyboard.
+#[derive(Clone, Copy)]
+pub struct PadFamily(pub Signal<Family>);
+
 #[component]
 pub fn Glyph(pad: Pad) -> Element {
-    let shell = use_context::<Shell>();
-    let family = shell.pad.read().as_ref().map(|(_, f)| *f).unwrap_or_default();
+    let shell = try_use_context::<Shell>();
+    let own = try_use_context::<PadFamily>();
+    let family = match (shell, own) {
+        (Some(shell), _) => shell.pad.read().as_ref().map(|(_, f)| *f).unwrap_or_default(),
+        (None, Some(own)) => (own.0)(),
+        (None, None) => Family::default(),
+    };
     // PlayStation face buttons are shapes, not letters.
     if family == Family::PlayStation {
         let shape = match pad {
@@ -304,6 +313,10 @@ pub fn HintBar() -> Element {
                 }
                 if top.is_none() && tab == Tab::Games {
                     span { class: "hint", Glyph { pad: Pad::Y } {t!("action-search")} }
+                }
+                if top == Some(Layer::Keyboard) {
+                    span { class: "hint", Glyph { pad: Pad::X } {t!("key-delete")} }
+                    span { class: "hint", Glyph { pad: Pad::Y } {t!("key-space")} }
                 }
                 span { class: "hint", Glyph { pad: Pad::A } "{select}" }
                 if top.is_some() || tab != Tab::Home {

@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 use super::{Icon, sliders::Slider};
 use crate::app::{Layer, Shell};
 use crate::input::SHARED;
-use crate::system::{audio, display, launch, off_thread};
+use crate::system::{audio, display, off_thread};
 use crate::t;
 
 #[component]
@@ -70,7 +70,7 @@ pub fn Quick() -> Element {
                             "data-nav": "",
                             onclick: move |_| {
                                 shell.return_outside();
-                                launch::touch_keyboard();
+                                shell.show_keyboard(false);
                             },
                             span { class: "start", Icon { name: "keyboard" } {t!("quick-keyboard")} }
                         }

@@ -4,6 +4,7 @@ mod app;
 mod i18n;
 mod input;
 mod library;
+mod osk;
 mod protocol;
 mod settings;
 mod system;
@@ -34,6 +35,12 @@ fn main() {
         window.with_fullscreen(Some(Fullscreen::Borderless(None)))
     };
 
+    dioxus::LaunchBuilder::desktop().with_cfg(config(window, (11, 11, 13, 255), "")).launch(app::App);
+}
+
+/// Shared by every JoyOS window. Windows in one process share a browser, and
+/// WebView2 refuses a second window whose browser settings differ.
+pub fn config(window: WindowBuilder, background: (u8, u8, u8, u8), head: &str) -> Config {
     let data_dir = directories::ProjectDirs::from("app", "JoyOS", "JoyOS").map(|d| d.data_local_dir().join("webview"));
     // Button sounds play from controller input, which isn't a "user gesture" to the browser.
     let mut browser_args = String::from("--autoplay-policy=no-user-gesture-required");
@@ -45,13 +52,12 @@ fn main() {
         .with_window(window)
         .with_menu(None)
         .with_disable_context_menu(true)
-        .with_background_color((11, 11, 13, 255))
-        .with_custom_head(format!("<style>{CSS}</style>"))
+        .with_background_color(background)
+        .with_custom_head(format!("<style>{CSS}</style>{head}"))
         .with_custom_protocol("joy", protocol::handle)
         .with_windows_browser_args(browser_args);
     if let Some(dir) = data_dir {
         config = config.with_data_directory(dir);
     }
-
-    dioxus::LaunchBuilder::desktop().with_cfg(config).launch(app::App);
+    config
 }

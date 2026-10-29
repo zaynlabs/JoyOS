@@ -2,6 +2,7 @@
 
 use windows::Win32::UI::Input::KeyboardAndMouse::{
     INPUT, INPUT_0, INPUT_KEYBOARD, INPUT_MOUSE, KEYBD_EVENT_FLAGS, KEYBDINPUT, KEYEVENTF_KEYUP,
+    KEYEVENTF_UNICODE,
     MOUSE_EVENT_FLAGS, MOUSEEVENTF_HWHEEL, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
     MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP, MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN,
     MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL, MOUSEINPUT, SendInput, VIRTUAL_KEY, VK_LWIN, VK_SNAPSHOT,
@@ -71,6 +72,24 @@ pub fn key(vk: VIRTUAL_KEY, down: bool) {
     send(&[keyboard(vk, flags)]);
 }
 
+/// Types text into whatever has focus, whatever the user's keyboard layout.
+pub fn text(text: &str) {
+    send(&unicode(text));
+}
+
+/// Each UTF-16 unit goes in as its own down/up pair; Windows rebuilds surrogate pairs.
+fn unicode(text: &str) -> Vec<INPUT> {
+    let key = |unit: u16, flags: KEYBD_EVENT_FLAGS| INPUT {
+        r#type: INPUT_KEYBOARD,
+        Anonymous: INPUT_0 {
+            ki: KEYBDINPUT { wVk: VIRTUAL_KEY(0), wScan: unit, dwFlags: flags, time: 0, dwExtraInfo: 0 },
+        },
+    };
+    text.encode_utf16()
+        .flat_map(|u| [key(u, KEYEVENTF_UNICODE), key(u, KEYEVENTF_UNICODE | KEYEVENTF_KEYUP)])
+        .collect()
+}
+
 /// Presses the keys in order, then releases them in reverse.
 pub fn chord(keys: &[VIRTUAL_KEY]) {
     let mut inputs: Vec<INPUT> = keys.iter().map(|&k| keyboard(k, KEYBD_EVENT_FLAGS(0))).collect();
@@ -81,4 +100,20 @@ pub fn chord(keys: &[VIRTUAL_KEY]) {
 /// Win + Print Screen: Windows saves the shot to Pictures\Screenshots.
 pub fn screenshot() {
     chord(&[VK_LWIN, VK_SNAPSHOT]);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn text_becomes_unicode_key_pairs() {
+        let inputs = unicode("é😀");
+        // One unit for é, a surrogate pair for the emoji, each pressed and released.
+        assert_eq!(inputs.len(), 6);
+        let scans: Vec<u16> = inputs.iter().map(|i| unsafe { i.Anonymous.ki.wScan }).collect();
+        assert_eq!(scans, [0xe9, 0xe9, 0xd83d, 0xd83d, 0xde00, 0xde00]);
+        let up = unsafe { inputs[1].Anonymous.ki.dwFlags };
+        assert_eq!(up, KEYEVENTF_UNICODE | KEYEVENTF_KEYUP);
+    }
 }

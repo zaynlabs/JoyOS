@@ -3,10 +3,17 @@
 use std::sync::atomic::{AtomicIsize, Ordering};
 
 use windows::Win32::Foundation::{HWND, LPARAM, WPARAM};
+use windows::Win32::Graphics::Dwm::{
+    DWMSBT_TRANSIENTWINDOW, DWMWA_SYSTEMBACKDROP_TYPE, DWMWA_WINDOW_CORNER_PREFERENCE, DWMWCP_ROUND,
+    DwmSetWindowAttribute,
+};
+use windows::Win32::Graphics::Gdi::{GetMonitorInfoW, MONITOR_DEFAULTTONEAREST, MONITORINFO, MonitorFromWindow};
 use windows::Win32::UI::Input::KeyboardAndMouse::VK_MENU;
 use windows::Win32::UI::WindowsAndMessaging::{
-    GetClassNameW, GetForegroundWindow, GetShellWindow, GetWindowTextW, IsIconic, PostMessageW,
-    SW_MINIMIZE, SW_RESTORE, SetForegroundWindow, ShowWindow, WM_CLOSE,
+    GWL_EXSTYLE, GetClassNameW, GetForegroundWindow, GetShellWindow, GetWindowLongPtrW, GetWindowTextW,
+    HWND_TOPMOST, IsIconic, IsWindowVisible, PostMessageW, SW_HIDE, SW_MINIMIZE, SW_RESTORE, SWP_NOACTIVATE, SWP_SHOWWINDOW,
+    SetForegroundWindow, SetWindowLongPtrW, SetWindowPos, ShowWindow, WM_CLOSE, WS_EX_NOACTIVATE,
+    WS_EX_APPWINDOW, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
 };
 
 static OURS: AtomicIsize = AtomicIsize::new(0);
@@ -104,6 +111,52 @@ pub fn focus(target: &Outside) {
 pub fn close(target: &Outside) {
     unsafe {
         let _ = PostMessageW(Some(HWND(target.hwnd as _)), WM_CLOSE, WPARAM(0), LPARAM(0));
+    }
+}
+
+// ----- the keyboard overlay -----
+
+/// A window that floats over everything and never takes focus, so keys it
+/// sends land in the app the user is typing into.
+pub fn make_overlay(hwnd: isize) {
+    let hwnd = HWND(hwnd as _);
+    unsafe {
+        let style = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+        let extra = (WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST).0 as isize;
+        // App windows show in the taskbar and Alt+Tab, which this mustn't.
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, (style | extra) & !(WS_EX_APPWINDOW.0 as isize));
+        let round = DWMWCP_ROUND;
+        let _ = DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, (&raw const round).cast(), 4);
+        // Acrylic: the app behind blurs through the page's transparent background.
+        let acrylic = DWMSBT_TRANSIENTWINDOW;
+        let _ = DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, (&raw const acrylic).cast(), 4);
+    }
+}
+
+/// Shows the overlay along the bottom of the screen the front app is on.
+pub fn show_overlay(hwnd: isize) {
+    unsafe {
+        let monitor = MonitorFromWindow(GetForegroundWindow(), MONITOR_DEFAULTTONEAREST);
+        let mut info = MONITORINFO { cbSize: std::mem::size_of::<MONITORINFO>() as u32, ..Default::default() };
+        if !GetMonitorInfoW(monitor, &mut info).as_bool() {
+            return;
+        }
+        let work = info.rcWork;
+        let (w, h) = (work.right - work.left, work.bottom - work.top);
+        let (ow, oh) = (w * 66 / 100, h * 44 / 100);
+        let x = work.left + (w - ow) / 2;
+        let y = work.bottom - oh - h * 2 / 100;
+        let _ = SetWindowPos(HWND(hwnd as _), Some(HWND_TOPMOST), x, y, ow, oh, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    }
+}
+
+pub fn is_visible(hwnd: isize) -> bool {
+    unsafe { IsWindowVisible(HWND(hwnd as _)).as_bool() }
+}
+
+pub fn hide(hwnd: isize) {
+    unsafe {
+        let _ = ShowWindow(HWND(hwnd as _), SW_HIDE);
     }
 }
 

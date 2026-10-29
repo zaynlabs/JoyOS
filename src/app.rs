@@ -12,11 +12,11 @@ use serde_json::{Value, json};
 
 use crate::input::{Dir, Family, InputEvent, Pad, SHARED};
 use crate::library::{Library, Source, Title};
-use crate::settings::{Settings, Theme};
+use crate::settings::{Keyboard, Settings, Theme};
 use crate::system::{self, off_thread, status::Status, window::Outside};
-use crate::{i18n, t, ui};
+use crate::{i18n, osk, t, ui};
 
-const NAV_JS: &str = include_str!("../assets/js/nav.js");
+pub const NAV_JS: &str = include_str!("../assets/js/nav.js");
 
 static INPUT: Mutex<Option<UnboundedReceiver<InputEvent>>> = Mutex::new(None);
 
@@ -281,6 +281,7 @@ impl Shell {
     // ----- outside apps -----
 
     fn summon(mut self) {
+        osk::send(osk::Msg::Hide);
         if let Some(mut front) = system::window::front_outside() {
             // Steam knows the real name of what's running; window titles are often junk.
             if let Some(game) = crate::library::running_steam_game().and_then(|id| self.find(&id)) {
@@ -310,6 +311,34 @@ impl Shell {
         }
     }
 
+    /// Shows the chosen on-screen keyboard over the app in front.
+    pub fn show_keyboard(self, toggle: bool) {
+        let s = self.settings.read().clone();
+        match s.keyboard {
+            Keyboard::Joy if osk::is_open() => {
+                if toggle {
+                    osk::send(osk::Msg::Hide);
+                }
+            }
+            Keyboard::Joy => {
+                let family = self.pad.read().as_ref().map(|(_, f)| *f).unwrap_or_default();
+                osk::send(osk::Msg::Show { theme: s.theme, sounds: s.sounds, reduced: s.reduce_motion, family });
+            }
+            Keyboard::Windows => {
+                spawn(async move {
+                    off_thread(move || {
+                        if toggle {
+                            system::launch::touch_keyboard();
+                        } else {
+                            system::launch::show_touch_keyboard();
+                        }
+                    })
+                    .await;
+                });
+            }
+        }
+    }
+
     pub fn screenshot(self) {
         let target = self.outside.read().clone();
         self.close_layers();
@@ -328,6 +357,14 @@ impl Shell {
     // ----- input -----
 
     fn handle(mut self, event: InputEvent) {
+        // While our keyboard is up over another app, the controller belongs to it.
+        if osk::is_open() && !system::window::we_are_in_front() {
+            match event {
+                InputEvent::Move(d) => return osk::send(osk::Msg::Move(d)),
+                InputEvent::Press(p) => return osk::send(osk::Msg::Press(p)),
+                _ => {}
+            }
+        }
         match event {
             InputEvent::Move(d) => {
                 let d = match d {
@@ -343,14 +380,11 @@ impl Shell {
                 match p {
                     Pad::A => self.send(json!({ "t": "activate" })),
                     Pad::B => self.back(),
+                    // Same as the keyboard over other apps: X deletes, Y adds a space.
+                    Pad::X if self.top() == Some(Layer::Keyboard) => ui::keyboard::backspace(self),
+                    Pad::Y if self.top() == Some(Layer::Keyboard) => ui::keyboard::typed(self, " "),
                     Pad::X => self.more(),
-                    Pad::Y => {
-                        if self.top() == Some(Layer::Keyboard) {
-                            ui::keyboard::backspace(self);
-                        } else {
-                            self.search();
-                        }
-                    }
+                    Pad::Y => self.search(),
                     Pad::Lb => self.step_tab(-1),
                     Pad::Rb => self.step_tab(1),
                     Pad::Lt => self.send(json!({ "t": "page", "d": -1 })),
@@ -367,6 +401,7 @@ impl Shell {
             }
             InputEvent::Tilt(x, y) => self.send(json!({ "t": "tilt", "x": x, "y": y })),
             InputEvent::Summon => self.summon(),
+            InputEvent::Keyboard { toggle } => self.show_keyboard(toggle),
             InputEvent::Connected(name, family) => {
                 let known = self.pad.read().as_ref().map(|(n, _)| n.clone());
                 if known.as_deref() != Some(&name) {
@@ -387,6 +422,7 @@ impl Shell {
             "more" => self.more(),
             "slide" => ui::sliders::slide(self, msg["id"].as_str().unwrap_or_default(), msg["d"].as_i64().unwrap_or(0) as i32),
             "type" => ui::keyboard::typed(self, msg["k"].as_str().unwrap_or_default()),
+            "keyboard" => self.show_keyboard(true),
             "log" => tracing::warn!("webview: {}", msg["m"].as_str().unwrap_or_default()),
             _ => {}
         }
@@ -420,8 +456,22 @@ pub fn App() -> Element {
     use_hook(move || {
         use dioxus::desktop::tao::platform::windows::WindowExtWindows;
         system::window::set_ours(dioxus::desktop::window().window.hwnd());
+        osk::create();
         shell.push_prefs();
         shell.rescan(false);
+    });
+
+    // The keyboard window would otherwise keep JoyOS running after the main one closes.
+    let desktop = dioxus::desktop::use_window();
+    let main_id = desktop.id();
+    dioxus::desktop::use_wry_event_handler(move |event, _| {
+        use dioxus::desktop::tao::event::{Event, WindowEvent};
+        if let Event::WindowEvent { window_id, event: WindowEvent::CloseRequested, .. } = event
+            && *window_id == main_id
+            && let Some(id) = osk::window_id()
+        {
+            desktop.close_window(id);
+        }
     });
 
     use_future(move || async move {

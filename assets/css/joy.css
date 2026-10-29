@@ -487,6 +487,24 @@ img { display: block; }
 .key.on { background: var(--ink); color: var(--bg); }
 .key:focus { transform: scale(1.12); background: var(--ink); color: var(--bg); z-index: 1; }
 
+/* The keyboard over other apps: its own small window, sized by Windows, so
+   everything here scales with the window instead of the screen. */
+:root[data-window="osk"], :root[data-window="osk"] body { background: transparent; }
+.osk {
+  position: fixed; inset: 0; display: grid; grid-template-rows: 1fr auto; gap: 2.2vh; padding: 4vh 2.6vw 3vh;
+  border-radius: 10px; background: linear-gradient(180deg, var(--glass-hi), var(--glass-lo) 60%), color-mix(in oklab, var(--bg) 78%, transparent);
+  backdrop-filter: none; animation: osk-in 420ms var(--spring) both;
+}
+@keyframes osk-in { from { transform: translateY(14%); opacity: 0; } }
+.osk .keys { width: 100%; height: 100%; grid-auto-rows: 1fr; gap: 1.6vh; }
+.osk .krow { gap: 0.7vw; min-height: 0; }
+.osk .key { transition: transform var(--t-fast) var(--out), background var(--t-fast) var(--out); height: 100%; max-width: none; font-size: clamp(15px, 4.4vh, 30px); border-radius: 12px; background: color-mix(in oklab, var(--ink) 9%, transparent); }
+.osk .key.wide { flex: 1.8; font-size: clamp(12px, 2.8vh, 18px); }
+.osk .key.space { flex: 5; font-size: clamp(12px, 2.8vh, 18px); }
+.osk .key.on { background: color-mix(in oklab, var(--ink) 22%, transparent); color: var(--ink); }
+.osk .key.is-focus { transform: scale(1.08); background: var(--ink); color: var(--bg); box-shadow: 0 10px 30px -12px var(--shadow); z-index: 1; }
+.osk-hints { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.6vh 2vw; font-size: clamp(11px, 2.4vh, 14px); color: var(--ink-2); }
+
 /* Toasts */
 .toasts { position: fixed; top: 26px; left: 50%; z-index: 60; display: grid; gap: 10px; justify-items: center; transform: translateX(-50%); pointer-events: none; }
 .toast { padding: 16px 28px; border-radius: 999px; font-size: 16px; font-weight: 580; animation: toast 3000ms var(--out) both; }

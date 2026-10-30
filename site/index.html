@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JoyOS: Your PC, from the couch</title>
+  <meta name="description" content="Pick up a controller and play your games, open your apps, watch your shows, or turn the PC off. JoyOS is the couch screen for Windows.">
+  <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ebe8e1" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="light dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JoyOS: Your PC, from the couch">
+  <meta property="og:description" content="Pick up a controller and play, watch, or open any app on your PC.">
+  <meta property="og:image" content="assets/img/13-dark-watch.webp">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/img/13-dark-watch.webp" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "JoyOS",
+    "operatingSystem": "Windows 10, Windows 11",
+    "applicationCategory": "GameApplication",
+    "description": "A full-screen, controller-first shell for Windows. Play games, open apps, and watch video from the couch.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- Film leader: a ring draws, 3 2 1 count down, the wordmark settles, then two bars part -->
+  <div class="intro" aria-hidden="true">
+    <span class="intro-bar top"></span>
+    <span class="intro-bar bottom"></span>
+    <svg class="intro-ring" viewBox="0 0 200 200" fill="none" stroke="currentColor">
+      <circle cx="100" cy="100" r="90" stroke-width="1.5" />
+      <path d="M100 4 V196 M4 100 H196" stroke-width="1" />
+      <circle class="intro-sweep" cx="100" cy="100" r="64" stroke-width="3" />
+    </svg>
+    <span class="intro-count"><b>3</b><b>2</b><b>1</b></span>
+    <span class="intro-mark">Joy<span>os</span></span>
+  </div>
+
+  <!-- Fixed background light. WebGL draws here when the browser allows it. -->
+  <canvas class="bg-light" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="letterbox" aria-hidden="true"><i></i><i></i></div>
+  <div class="chapter-card" aria-hidden="true"><span data-card-no>01</span><b data-card-name>Opening</b></div>
+
+  <!-- Timecode and chapter name, driven by scroll. Decorative. -->
+  <div class="hud" aria-hidden="true">
+    <span class="hud-tc" data-tc>0:00</span>
+    <span class="hud-ch" data-chapter-label>Opening</span>
+    <span class="hud-bar"><i></i></span>
+  </div>
+
+  <div class="cursor" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="wordmark" href="#top" aria-label="JoyOS home">Joy<span>os</span></a>
+    <nav class="top-nav" aria-label="Main">
+      <a href="#play">Play</a>
+      <a href="#try">Try it</a>
+      <a href="#plans">Plans</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a class="btn btn-small" href="https://github.com/ZaynLabs/JoyOS/releases/latest" data-cta="header">Download</a>
+  </header>
+
+  <main id="main">
+
+    <!-- 1. Opening -->
+    <section class="hero" id="top" data-chapter="Opening">
+      <div class="aurora" aria-hidden="true"></div>
+      <div class="hero-stage" aria-hidden="true">
+        <div class="hero-layer"><figure class="hero-console">
+          <img src="assets/img/13-dark-watch.webp" width="1280" height="705" alt="" decoding="async" fetchpriority="high">
+          <span class="hero-glare"></span>
+        </figure></div>
+        <figure class="hero-chip">
+          <img src="assets/img/04-quick-menu.webp" width="1280" height="705" alt="" decoding="async">
+        </figure>
+      </div>
+      <p class="eyebrow">For Windows 10 and 11</p>
+      <h1 class="hero-title">
+        Your PC,<br>
+        <em>from the couch.</em>
+      </h1>
+      <p class="hero-sub">
+        Pick up a controller. Play your games, open your apps, watch your shows, or turn the PC off. You never need the mouse.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-large" href="https://github.com/ZaynLabs/JoyOS/releases/latest" data-cta="hero">Download for Windows</a>
+        <a class="link-quiet" href="#play">See how it works</a>
+      </div>
+      <p class="fine">Free to start. No account needed.</p>
+      <p class="scroll-cue" aria-hidden="true">Scroll</p>
+    </section>
+
+    <!-- Ticker: four verbs, running past -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Play</span><i></i><span>Watch</span><i></i><span>Open</span><i></i><span>Turn off</span><i></i>
+        <span>Play</span><i></i><span>Watch</span><i></i><span>Open</span><i></i><span>Turn off</span><i></i>
+        <span>Play</span><i></i><span>Watch</span><i></i><span>Open</span><i></i><span>Turn off</span><i></i>
+        <span>Play</span><i></i><span>Watch</span><i></i><span>Open</span><i></i><span>Turn off</span><i></i>
+      </div>
+    </div>
+
+    <!-- 2. The push-in: the frame grows to fill the screen, then the scene changes -->
+    <section class="dolly" data-chapter="The push-in" aria-label="Opening film">
+      <div class="dolly-stage">
+        <figure class="dolly-frame">
+          <img class="dolly-still" src="assets/img/13-dark-watch.webp" width="1280" height="705" alt="JoyOS Watch screen with Netflix, YouTube, Twitch, and Spotify tiles on a dark glass background" decoding="async">
+          <video class="dolly-video" muted playsinline loop preload="none" poster="assets/img/08-settings-look.webp" width="1280" height="704" aria-hidden="true" data-autoplay>
+            <source src="assets/video/05-theme.mp4" type="video/mp4">
+          </video>
+          <span class="dolly-glint" aria-hidden="true"></span>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 3. Put the mouse down -->
+    <section class="mouse" data-chapter="Put the mouse down">
+      <div class="mouse-stage">
+        <h2 class="mouse-title">Put the mouse down.</h2>
+        <div class="mouse-art" aria-hidden="true">
+          <svg class="mouse-svg" viewBox="0 0 80 120" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round">
+            <rect x="6" y="6" width="68" height="108" rx="34" />
+            <path d="M40 24 V46" stroke-linecap="round" />
+          </svg>
+          <svg class="pad-svg" viewBox="0 0 240 150" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+            <path class="pad-draw" pathLength="1" d="M62 28 C34 28 12 48 9 84 C6 116 20 132 46 130 C72 128 82 108 102 108 L138 108 C158 108 168 128 194 130 C220 132 234 116 231 84 C228 48 206 28 178 28 Z" />
+            <path class="pad-draw" pathLength="1" d="M58 62 V92 M43 77 H73" />
+            <path class="pad-draw" pathLength="1" d="M178 66 A7 7 0 1 0 178.01 66 M192 82 A7 7 0 1 0 192.01 82" />
+            <g class="pad-lit" stroke="none">
+              <rect x="56" y="62" width="4" height="30" rx="1.5" />
+              <rect x="43" y="75" width="30" height="4" rx="1.5" />
+              <circle cx="178" cy="66" r="5" />
+              <circle cx="192" cy="82" r="5" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Press Start: pinned, with the quick menu clip -->
+    <section class="pin" id="play" data-pin data-chapter="Press Start" aria-label="Press Start">
+      <div class="pin-stage">
+        <div class="pin-copy">
+          <p class="kicker">Press Start</p>
+          <h2 class="pin-title">
+            <span class="pin-line" style="--t: 0">Put the mouse down.</span>
+            <span class="pin-line" style="--t: 0.22">Press Start, and JoyOS opens over anything you're doing.</span>
+            <span class="pin-line" style="--t: 0.44">Change the volume. Turn on mouse mode. Save the last 30 seconds of play.</span>
+          </h2>
+          <p class="pin-hint" style="--t: 0.6">Hold Start and View to come back from any game.</p>
+        </div>
+        <div class="pin-video">
+          <video muted playsinline loop preload="none" poster="assets/img/04-quick-menu.webp" width="1280" height="704" aria-label="The quick menu opening over the games list" data-autoplay>
+            <source src="assets/video/04-quick-menu.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 6. One place: giant store names on a pinned track -->
+    <section class="run" data-chapter="One place" aria-label="Where JoyOS finds games">
+      <div class="track">
+        <p class="run-item"><span class="run-no">01</span>Steam</p>
+        <p class="run-item"><span class="run-no">02</span>Epic Games</p>
+        <p class="run-item"><span class="run-no">03</span>GOG</p>
+        <p class="run-item"><span class="run-no">04</span>Ubisoft</p>
+        <p class="run-item"><span class="run-no">05</span>Xbox</p>
+        <p class="run-item run-end"><em>Every game.</em> One screen.</p>
+      </div>
+    </section>
+
+    <!-- 7. Any app: the pointer and keyboard mock -->
+    <section class="chapter apps" id="apps" data-chapter="Any app">
+      <div class="apps-text">
+        <p class="kicker reveal">Any app</p>
+        <h2 class="display reveal">Use any app<br><em>with a controller.</em></h2>
+        <p class="lede reveal">Turn on mouse mode and the left stick moves the pointer. The right stick scrolls. A clicks, and the on-screen keyboard appears when you need to type.</p>
+        <ul class="rows">
+          <li class="reveal"><strong>Keyboard that follows you</strong><span>It suggests the words you use most, in your language.</span></li>
+          <li class="reveal"><strong>Voice when you'd rather talk</strong><span>Press the Voice key and say what you want to write.</span></li>
+          <li class="reveal"><strong>Back to the couch anytime</strong><span>Hold Start and View. JoyOS is there in a moment.</span></li>
+        </ul>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock-field"><span data-typed></span><i class="caret"></i></div>
+        <div class="mock-kb">
+          <div class="kb-row"><i class="k" data-k="q">q</i><i class="k" data-k="w">w</i><i class="k" data-k="e">e</i><i class="k" data-k="r">r</i><i class="k" data-k="t">t</i><i class="k" data-k="y">y</i><i class="k" data-k="u">u</i><i class="k" data-k="i">i</i><i class="k" data-k="o">o</i><i class="k" data-k="p">p</i></div>
+          <div class="kb-row"><i class="k" data-k="a">a</i><i class="k" data-k="s">s</i><i class="k" data-k="d">d</i><i class="k" data-k="f">f</i><i class="k" data-k="g">g</i><i class="k" data-k="h">h</i><i class="k" data-k="j">j</i><i class="k" data-k="k">k</i><i class="k" data-k="l">l</i></div>
+          <div class="kb-row"><i class="k" data-k="z">z</i><i class="k" data-k="x">x</i><i class="k" data-k="c">c</i><i class="k" data-k="v">v</i><i class="k" data-k="b">b</i><i class="k" data-k="n">n</i><i class="k" data-k="m">m</i></div>
+        </div>
+        <div class="mock-ptr">
+          <svg viewBox="0 0 24 30" width="26" height="32"><path d="M2 2 L2 24 L8 18 L12 28 L16 26 L12 17 L20 17 Z" fill="currentColor" stroke="#0b0b0d" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="mock-voice"></span>
+      </div>
+    </section>
+
+    <!-- 8. Watch -->
+    <section class="chapter" data-chapter="Watch">
+      <div class="fan">
+        <figure class="fan-card" style="--i: -1">
+          <img src="assets/img/08-settings-look.webp" width="1280" height="705" alt="The Look settings, with light and dark choices" loading="lazy" decoding="async">
+        </figure>
+        <figure class="fan-card" style="--i: 1">
+          <img src="assets/img/04-quick-menu.webp" width="1280" height="705" alt="The quick menu over the games list" loading="lazy" decoding="async">
+        </figure>
+        <figure class="fan-card fan-main" style="--i: 0">
+          <img src="assets/img/05-watch.webp" width="1280" height="705" alt="The Watch screen with Netflix, YouTube, Twitch, and Spotify" loading="lazy" decoding="async">
+        </figure>
+      </div>
+      <div class="chapter-copy">
+        <p class="kicker reveal">Watch</p>
+        <h2 class="display reveal">Your shows,<br><em>full screen.</em></h2>
+        <p class="lede reveal">Netflix, YouTube, Twitch, and Spotify are ready with one press. Add any other site you like. Each one opens full screen, ready for the controller.</p>
+      </div>
+    </section>
+
+    <!-- 9. Family (Plus) -->
+    <section class="chapter family" id="family" data-chapter="Family">
+      <div class="family-grid">
+        <div>
+          <p class="kicker reveal">Family <span class="tag">Plus</span></p>
+          <h2 class="display reveal">Everyone gets<br><em>their own time.</em></h2>
+          <p class="lede reveal">Give each person a PIN and a daily time limit. Pick who's playing, and JoyOS keeps count. You get a gentle buzz five minutes before time is up.</p>
+        </div>
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="ring-ticks" cx="100" cy="100" r="98" />
+            <circle class="ring-track" cx="100" cy="100" r="90" />
+            <circle class="ring-arc" cx="100" cy="100" r="90" pathLength="1" />
+          </svg>
+          <p class="ring-read" data-ring aria-live="off" aria-label="Time left">60:00</p>
+          <div class="pin-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Your look: a theme switch with a circular wipe, plus the greeting in 13 languages -->
+    <section class="chapter looks" data-chapter="Your look">
+      <p class="kicker reveal">Your look</p>
+      <p class="welcome" aria-live="off"><span data-welcome lang="en">Welcome</span></p>
+      <h2 class="display reveal">Looks like<br><em>yours.</em></h2>
+      <p class="lede reveal">Light, dark, or automatic with the clock. Choose larger text or stronger contrast. JoyOS speaks 13 languages, and each one reads naturally, not like a translation.</p>
+      <button class="btn btn-ghost theme-toggle reveal" type="button" data-theme-toggle aria-pressed="false">Switch to light</button>
+    </section>
+
+    <!-- 11. Credits: the short version, then plans and questions -->
+    <section class="facts" aria-label="The short version" data-chapter="Credits">
+      <p class="credit"><small>Works on</small>Windows 10 and 11</p>
+      <p class="credit"><small>Sign-in</small>No account needed</p>
+      <p class="credit"><small>Your things</small>Nothing is uploaded</p>
+      <p class="credit"><small>Crash reports</small>Stay on your PC</p>
+    </section>
+
+    <section class="chapter plans" id="plans">
+      <p class="kicker reveal">Plans</p>
+      <h2 class="display reveal">Start free.<br><em>Add Plus when you want more.</em></h2>
+      <div class="plan-list">
+        <article class="plan reveal">
+          <h3>Free</h3>
+          <p class="plan-price">Everything you need to start.</p>
+          <p>The couch screen, your games and apps, Watch, the keyboard, and the quick menu.</p>
+          <a class="btn btn-ghost" href="https://github.com/ZaynLabs/JoyOS/releases/latest" data-cta="plan-free">Download free</a>
+        </article>
+        <article class="plan plan-plus reveal">
+          <h3>Plus</h3>
+          <p class="plan-price">Everything in Free, and:</p>
+          <ul>
+            <li>Family PINs and daily time limits</li>
+            <li>Settings for each game</li>
+            <li>Keep settings the same on two PCs</li>
+            <li>Add-ons you install yourself</li>
+          </ul>
+          <a class="btn btn-large" href="https://github.com/ZaynLabs/JoyOS/releases/latest" data-cta="plan-plus">Get Plus</a>
+          <p class="fine">Price set at launch.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="chapter questions" id="questions" data-chapter="Questions">
+      <p class="kicker reveal">Questions</p>
+      <h2 class="display reveal">Good questions.</h2>
+      <div class="faq">
+        <details class="reveal">
+          <summary>Do I need a controller?</summary>
+          <p>No. The keyboard and mouse work too. A controller is what makes it feel like a console.</p>
+        </details>
+        <details class="reveal">
+          <summary>Which controllers work?</summary>
+          <p>Xbox controllers work best. Most other controllers that Windows can see also work.</p>
+        </details>
+        <details class="reveal">
+          <summary>Does it replace Windows?</summary>
+          <p>No. JoyOS is an app. You can open it when you want the couch screen. If you want it to open at startup, turn that on in Settings.</p>
+        </details>
+        <details class="reveal">
+          <summary>Does it send my data anywhere?</summary>
+          <p>No. Your settings stay on your PC. Cover art and update checks are the only things that go online.</p>
+        </details>
+        <details class="reveal">
+          <summary>Will it find my games?</summary>
+          <p>If your games are in Steam, Epic Games, GOG, Ubisoft, or Xbox, JoyOS finds them and shows them with their cover art.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- 12. Finale -->
+    <section class="final" data-chapter="Finale">
+      <h2 class="display reveal">Your couch<br><em>is ready.</em></h2>
+      <a class="btn btn-large reveal" href="https://github.com/ZaynLabs/JoyOS/releases/latest" data-cta="final"><span class="sweep" aria-hidden="true"></span>Download for Windows</a>
+      <p class="fine reveal">Free to start. Windows 10 and 11.</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p class="wordmark">Joy<span>os</span></p>
+    <nav aria-label="Footer">
+      <a href="#play">Play</a>
+      <a href="#plans">Plans</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <p class="fine">Made for the couch.</p>
+    <p class="foot-big" aria-hidden="true">Joy<span>os</span></p>
+  </footer>
+
+  <!-- Shown on phones after the hero, and hidden over the plans and the finale -->
+  <div class="sticky-cta" data-sticky-cta inert>
+    <a class="btn btn-large" href="https://github.com/ZaynLabs/JoyOS/releases/latest" data-cta="sticky">Download for Windows</a>
+  </div>
+
+  <!-- Classic scripts, not modules, so the page also opens straight from disk (file://) -->
+  <script src="js/shader.js" defer></script>
+  <script src="js/demo.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

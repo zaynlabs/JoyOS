@@ -1,0 +1,9 @@
+{
+  // Cloudflare reads this when it deploys with `npx wrangler deploy`.
+  // The landing page is static files in site/, so there is no Worker code.
+  "name": "joyos-site",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./site"
+  }
+}

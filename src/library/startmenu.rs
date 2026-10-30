@@ -43,6 +43,8 @@ pub fn scan() -> Vec<Title> {
             launch: path.to_string_lossy().into_owned(),
             name,
             source: Source::App,
+            emulator: None,
+            args: None,
             cover: None,
             hero: None,
             logo: None,
@@ -58,6 +60,8 @@ pub fn scan() -> Vec<Title> {
         name: crate::t!("apps-files"),
         source: Source::App,
         launch: "explorer.exe".into(),
+        emulator: None,
+        args: None,
         cover: None,
         hero: None,
         logo: None,
@@ -83,8 +87,31 @@ fn walk(dir: &Path, depth: usize, out: &mut Vec<PathBuf>) {
             if depth < 2 && !SKIP_FOLDERS.contains(&lower.as_str()) {
                 walk(&path, depth + 1, out);
             }
-        } else if lower.ends_with(".lnk") && !SKIP_WORDS.iter().any(|w| lower.contains(w)) {
+        } else if let Some(stem) = lower.strip_suffix(".lnk")
+            && !skipped(stem)
+        {
             out.push(path);
         }
+    }
+}
+
+/// Whole words only, so "Helpdesk" or "Setup Wizard Pro" style names aren't caught by "help".
+fn skipped(name: &str) -> bool {
+    let words = |s: &str| format!(" {} ", s.split(|c: char| !c.is_alphanumeric()).filter(|w| !w.is_empty()).collect::<Vec<_>>().join(" "));
+    let name = words(name);
+    SKIP_WORDS.iter().any(|w| name.contains(&words(w)))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn skip_words_match_whole_words() {
+        assert!(skipped("uninstall foo"));
+        assert!(skipped("foo help"));
+        assert!(skipped("what's new in foo"));
+        assert!(!skipped("helpdesk"));
+        assert!(!skipped("setupper"));
     }
 }

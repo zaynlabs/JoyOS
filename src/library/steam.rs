@@ -3,7 +3,16 @@ use std::path::{Path, PathBuf};
 use super::{Rgb, Source, Title, media_url, vdf};
 
 /// Tools and runtimes Steam installs alongside games.
-const NOT_GAMES: &[&str] = &["228980", "1070560", "1391110", "1628350", "1493710", "2180100"];
+const NOT_GAMES: &[&str] = &[
+    "228980", "1070560", "1391110", "1628350", "1493710", "2180100", // runtimes
+    "250820", "1007", "211", "215", "218", "243730", "243750", // SteamVR, SDKs
+];
+/// Names that give away a tool rather than a game.
+const NOT_GAME_WORDS: &[&str] = &["Redistributable", "Dedicated Server", " SDK", "Proton", "Steam Linux Runtime"];
+
+/// `StateFlags` bits from the manifest.
+const FULLY_INSTALLED: u32 = 4;
+const UNINSTALLING: u32 = 2048;
 
 fn steam_root() -> Option<PathBuf> {
     crate::system::registry::read_string(r"Software\Valve\Steam", "SteamPath")
@@ -13,6 +22,11 @@ fn steam_root() -> Option<PathBuf> {
             let fallback = PathBuf::from(r"C:\Program Files (x86)\Steam");
             fallback.exists().then_some(fallback)
         })
+}
+
+/// Where Steam keeps its cover art. The `joy` protocol may serve files from here.
+pub fn cache_dir() -> Option<PathBuf> {
+    steam_root().map(|r| r.join("appcache/librarycache"))
 }
 
 pub fn scan() -> Vec<Title> {
@@ -61,18 +75,22 @@ fn from_manifest(text: &str, lib: &Path, cache: &Path) -> Option<Title> {
     let app = root.obj("AppState")?;
     let id = app.str("appid")?.to_owned();
     let name = app.str("name")?.to_owned();
+    // Missing flags mean an old manifest; those were installed.
+    let flags: u32 = app.str("StateFlags").and_then(|s| s.parse().ok()).unwrap_or(FULLY_INSTALLED);
     if NOT_GAMES.contains(&id.as_str())
-        || name.contains("Redistributable")
-        || name.starts_with("Proton")
-        || name.starts_with("Steam Linux Runtime")
+        || NOT_GAME_WORDS.iter().any(|w| name.contains(w))
+        || flags & FULLY_INSTALLED == 0
+        || flags & UNINSTALLING != 0
     {
         return None;
     }
+    // Only covers on disk: newer games keep their art at hashed paths, so a guessed
+    // download address often fails. Missing covers are filled in by `art`.
     let art = |file: &str| find_art(cache, &id, file);
     Some(Title {
         launch: format!("steam://rungameid/{id}"),
-        cover: art("library_600x900.jpg").or_else(|| Some(cdn(&id, "library_600x900.jpg"))),
-        hero: art("library_hero.jpg").or_else(|| Some(cdn(&id, "library_hero.jpg"))),
+        cover: art("library_600x900.jpg"),
+        hero: art("library_hero.jpg"),
         logo: art("logo.png"),
         folder: app.str("installdir").map(|d| lib.join("steamapps/common").join(d)),
         last_played: app.str("LastPlayed").and_then(|s| s.parse().ok()).filter(|&t: &i64| t > 0),
@@ -80,11 +98,9 @@ fn from_manifest(text: &str, lib: &Path, cache: &Path) -> Option<Title> {
         id: format!("steam:{id}"),
         name,
         source: Source::Steam,
+        emulator: None,
+        args: None,
     })
-}
-
-fn cdn(id: &str, file: &str) -> String {
-    format!("https://cdn.cloudflare.steamstatic.com/steam/apps/{id}/{file}")
 }
 
 /// Steam has used three cache layouts over the years; check them all.
@@ -123,12 +139,24 @@ mod tests {
         assert_eq!(game.id, "steam:620");
         assert_eq!(game.launch, "steam://rungameid/620");
         assert_eq!(game.last_played, Some(1_700_000_000));
-        assert!(game.cover.unwrap().contains("/620/library_600x900.jpg"));
+        assert_eq!(game.cover, None, "no art on disk; the art step fills it in");
     }
 
     #[test]
-    fn skips_runtimes() {
+    fn skips_runtimes_and_tools() {
         let text = r#""AppState" { "appid" "228980" "name" "Steamworks Common Redistributables" }"#;
         assert!(from_manifest(text, Path::new("C:\\"), Path::new("C:\\")).is_none());
+        let server = r#""AppState" { "appid" "4020" "name" "Garry's Mod Dedicated Server" }"#;
+        assert!(from_manifest(server, Path::new("C:\\"), Path::new("C:\\")).is_none());
+    }
+
+    #[test]
+    fn only_installed_games_show() {
+        let manifest = |flags: u32| format!(r#""AppState" {{ "appid" "620" "name" "Portal 2" "StateFlags" "{flags}" }}"#);
+        let show = |flags| from_manifest(&manifest(flags), Path::new("C:\\"), Path::new("C:\\")).is_some();
+        assert!(show(4));
+        assert!(show(6), "an update waiting still lets it start");
+        assert!(!show(1026), "still downloading");
+        assert!(!show(4 | 2048), "being removed");
     }
 }

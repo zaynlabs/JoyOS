@@ -8,7 +8,7 @@ use std::time::{Duration, Instant};
 
 use futures_channel::mpsc::{UnboundedReceiver, UnboundedSender, unbounded};
 use gilrs::ff::{BaseEffect, BaseEffectType, EffectBuilder, Replay, Ticks};
-use gilrs::{Axis, Button, EventType, GamepadId, Gilrs};
+use gilrs::{Axis, Button, EventType, GamepadId, Gilrs, PowerInfo};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
     VIRTUAL_KEY, VK_BROWSER_BACK, VK_BROWSER_FORWARD, VK_DOWN, VK_ESCAPE, VK_LEFT, VK_RETURN, VK_RIGHT, VK_UP,
 };
@@ -72,6 +72,12 @@ pub enum InputEvent {
     Keyboard { toggle: bool },
     Connected(String, Family),
     Disconnected,
+    /// Typed on another device (the phone remote). Goes to whatever has focus.
+    Text(String),
+    /// LB + RB + View + Start held for a few seconds: the way back to Windows.
+    Recovery,
+    /// A phone just paired with the remote.
+    Paired,
 }
 
 /// Settings the UI changes and the input thread reads.
@@ -82,6 +88,9 @@ pub struct Shared {
     pub rumble: AtomicBool,
     /// JoyOS's own keyboard is up over another app.
     pub typing: AtomicBool,
+    /// Controller battery, 0–100. 255 when the pad doesn't say.
+    pub battery: AtomicU8,
+    pub charging: AtomicBool,
     rumble_now: AtomicBool,
 }
 
@@ -91,6 +100,8 @@ pub static SHARED: Shared = Shared {
     mouse_speed: AtomicU8::new(5),
     rumble: AtomicBool::new(true),
     typing: AtomicBool::new(false),
+    battery: AtomicU8::new(255),
+    charging: AtomicBool::new(false),
     rumble_now: AtomicBool::new(false),
 };
 
@@ -99,19 +110,30 @@ pub fn rumble() {
     SHARED.rumble_now.store(true, Ordering::Relaxed);
 }
 
+static SENDER: std::sync::OnceLock<UnboundedSender<InputEvent>> = std::sync::OnceLock::new();
+
+/// Starts the controller thread. Events also go to the phone remote, through `sender()`.
 pub fn start() -> UnboundedReceiver<InputEvent> {
     let (tx, rx) = unbounded();
-    std::thread::Builder::new()
-        .name("controller".into())
-        .spawn(move || run(tx))
-        .expect("spawn controller thread");
+    let _ = SENDER.set(tx.clone());
+    if let Err(e) = std::thread::Builder::new().name("controller".into()).spawn(move || run(tx)) {
+        tracing::error!("no controller thread: {e}");
+    }
     rx
+}
+
+/// Lets other sources (the phone remote) send the same events as the controller.
+pub fn sender() -> Option<UnboundedSender<InputEvent>> {
+    SENDER.get().cloned()
 }
 
 const TICK: Duration = Duration::from_millis(8);
 const FIRST_REPEAT: Duration = Duration::from_millis(380);
 const STICK_ON: f32 = 0.55;
 const STICK_DEAD: f32 = 0.14;
+/// How long the recovery buttons must be held.
+const RECOVERY_HOLD: Duration = Duration::from_secs(5);
+const RECOVERY_BUTTONS: [Button; 4] = [Button::LeftTrigger, Button::RightTrigger, Button::Select, Button::Start];
 
 /// Console-style held-direction repeat that speeds up the longer you hold.
 #[derive(Default)]
@@ -211,10 +233,13 @@ fn run(tx: UnboundedSender<InputEvent>) {
     let mut last_tilt_at = Instant::now();
     let mut carry = (0.0f32, 0.0f32, 0.0f32);
     let mut last = Instant::now();
+    let mut last_battery = Instant::now() - Duration::from_secs(60);
     // What a button did when pressed, so release undoes the same thing even if
     // focus moved in between.
     let mut mouse_held: Vec<(Button, inject::MouseButton)> = vec![];
     let mut keys_held: Vec<(Button, VIRTUAL_KEY)> = vec![];
+    // When the recovery buttons went down, and whether this hold already fired.
+    let mut recovery: (Option<Instant>, bool) = (None, false);
 
     loop {
         let in_front = window::we_are_in_front();
@@ -230,6 +255,13 @@ fn run(tx: UnboundedSender<InputEvent>) {
                     send(InputEvent::Connected(name.clone(), Family::from_name(&name)));
                 }
                 EventType::Disconnected => {
+                    // A pad that drops mid-press would otherwise leave the button held down.
+                    for (_, c) in mouse_held.drain(..) {
+                        inject::button(c, false);
+                    }
+                    for (_, k) in keys_held.drain(..) {
+                        inject::key(k, false);
+                    }
                     active = gilrs.gamepads().map(|(id, _)| id).find(|&id| id != ev.id);
                     match active {
                         Some(id) => {
@@ -309,6 +341,17 @@ fn run(tx: UnboundedSender<InputEvent>) {
             let (lx, ly) = (pad.value(Axis::LeftStickX), pad.value(Axis::LeftStickY));
             let (rx, ry) = (pad.value(Axis::RightStickX), pad.value(Axis::RightStickY));
 
+            let holding = RECOVERY_BUTTONS.iter().all(|&b| pad.is_pressed(b));
+            recovery = match (holding, recovery) {
+                (false, _) => (None, false),
+                (true, (None, _)) => (Some(now), false),
+                (true, (Some(t), false)) if now.duration_since(t) >= RECOVERY_HOLD => {
+                    send(InputEvent::Recovery);
+                    (Some(t), true)
+                }
+                (true, held) => held,
+            };
+
             if in_front || typing {
                 let dpad = [
                     (Button::DPadUp, Dir::Up),
@@ -354,6 +397,22 @@ fn run(tx: UnboundedSender<InputEvent>) {
                         inject::scroll(0, h as i32);
                     }
                 }
+            }
+        }
+
+        // Battery changes slowly, so asking every few seconds is plenty.
+        if now.duration_since(last_battery) > Duration::from_secs(5) {
+            last_battery = now;
+            if let Some(pad) = active.and_then(|id| gilrs.connected_gamepad(id)) {
+                let (level, charging) = match pad.power_info() {
+                    PowerInfo::Discharging(p) => (p, false),
+                    PowerInfo::Charging(p) => (p, true),
+                    PowerInfo::Charged => (100, true),
+                    PowerInfo::Wired => (255, true),
+                    PowerInfo::Unknown => (255, false),
+                };
+                SHARED.battery.store(level, Ordering::Relaxed);
+                SHARED.charging.store(charging, Ordering::Relaxed);
             }
         }
 

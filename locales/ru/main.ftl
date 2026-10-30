@@ -20,7 +20,6 @@ action-menu = Меню
 action-tabs = Вкладки
 action-continue = Дальше
 action-done = Готово
-action-cancel = Отмена
 games-count = { $count ->
     [one] { $count } игра
     [few] { $count } игры
@@ -29,6 +28,7 @@ games-count = { $count ->
 filter-all = Все
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = Недавние
 games-search = Найти игру
 games-none = Ничего не нашлось.
@@ -44,10 +44,8 @@ when-days = { $n ->
     [few] { $n } дня назад
    *[other] { $n } дней назад
 }
-apps-title = Программы
 apps-tip = В программах геймпад работает как мышь. Нажмите Start, чтобы вернуться.
 apps-files = Файлы
-quick-title = Быстрое меню
 quick-sound = Звук
 quick-brightness = Яркость
 quick-mouse = Геймпад как мышь
@@ -106,3 +104,130 @@ setup-pad-body = Нажмите A, чтобы продолжить. Можно �
 setup-finding = Ищем ваши игры
 setup-ready = Всё готово
 setup-start = Поехали
+
+## Смотреть
+tab-watch = Смотреть
+watch-lede = Стриминг и видео на весь экран. Внизу можно добавить свой сайт.
+watch-add = Добавить сайт
+action-remove = Убрать
+text-type-here = Введите здесь
+key-voice = Голос
+toast-clip = Последние 30 секунд сохранены.
+quick-clip = Сохранить последние 30 секунд
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = Классика
+
+## Настройки
+set-library = Игры и приложения
+set-art = Картинки игр
+art-on = Вкл.
+art-off = Выкл.
+set-rom-add = Добавить папку с играми
+set-family = Семья
+family-playing = Кто играет
+family-everyone = Все
+family-add = Добавить человека
+family-set-pin = Задать PIN-код
+family-change-pin = Сменить PIN-код
+family-limit = До { $minutes } мин в день
+family-no-limit = Без дневного лимита
+stats-week = часов за неделю
+stats-year = часов за год
+stats-minutes = { $minutes } мин
+set-connect = Подключения
+conn-bluetooth = Bluetooth и устройства
+conn-wifi = Wi-Fi
+set-phone = Использовать телефон как пульт
+phone-open = На телефоне откройте { $address }
+phone-pin = Введите код { $pin }
+set-plugins = Дополнения
+plugins-open = Открыть папку дополнений
+set-plan = Тариф
+plan-current = Ваш тариф: { $plan }
+plan-free = Бесплатный
+plan-plus = JoyOS Plus
+plan-business = Бизнес
+plan-enter-key = Ввести ключ
+plan-activated = { $plan } готов. Спасибо!
+plan-bad-key = Этот ключ не работает. Проверьте его и попробуйте ещё раз.
+plan-needs-plus = Нужен JoyOS Plus
+plan-needs-business = Нужен тариф «Бизнес»
+kiosk-make = Сделать JoyOS всем рабочим столом
+kiosk-made = Готово. Прочитай оба файла, потом запусти каждый от имени администратора.
+kiosk-failed = Не удалось создать скрипты.
+set-crash = Сохранять отчёты об ошибках на этом ПК
+set-crash-note = Они остаются здесь. Ничего не отправляется.
+sync-folder = Общая папка для настроек
+sync-now = Скопировать настройки сейчас
+sync-pulled = Настройки обновлены с другого ПК.
+sync-pushed = Настройки сохранены в общей папке.
+sync-same = Настройки уже актуальны.
+sync-failed = Не удалось открыть общую папку.
+update-address = Адрес новых версий
+update-available = Вышла JoyOS { $version }.
+update-get = Скачать { $version }
+set-scene = Фон
+scene-still = Статичный
+scene-aurora = Полярное сияние
+set-contrast = Контраст сильнее
+set-text-large = Крупнее текст
+theme-auto = Авто
+pad-battery = Батарея геймпада: { $pct }%
+pad-charging = Заряжается
+member-added = Добавлено.
+
+## PIN
+pin-ask = Введите PIN-код
+pin-set = Выберите PIN-код
+pin-clear = Стереть
+pin-wrong = Это не тот PIN-код.
+pin-saved = PIN-код сохранён.
+pin-switched = Сейчас играет { $name }.
+
+## Настройки для каждой игры и лимиты времени
+profile-default = По умолчанию
+profile-needs-plus = Настройки для каждой игры требуют JoyOS Plus.
+detail-swap = Поменять A и B
+detail-power = Питание
+power-balanced = Сбалансированный
+power-performance = Производительность
+power-saver = Экономия
+toast-time-up = Время { $name } на сегодня вышло.
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = Ключ для обложек не работает. Проверь его в настройках.
+key-latin = ABC
+phone-forget = Забыть телефоны
+phone-forgot = Телефонам понадобится новый код.
+phone-paired = Телефон подключён.
+pin-grown-up = Нужен PIN взрослого
+pin-not-saved = Не удалось сохранить PIN. Попробуй ещё раз.
+pin-typed = { $count } из 6 цифр
+pin-wait = Слишком много попыток. Подожди { $seconds } с.
+recovery-title = Назад в Windows
+recovery-body = Открой рабочий стол Windows или посмотри, как снова запускать компьютер с Windows.
+recovery-desktop = Открыть рабочий стол Windows
+recovery-script = Показать, как вернуть Windows
+remote-title = Пульт
+remote-move = Двигать
+remote-press = Нажать
+remote-type = Ввести
+remote-send = Отправить
+remote-lost = Телевизор не отвечает. Проверь Wi-Fi.
+remote-typing = Открыто поле для текста. Пиши ниже.
+remote-lb = Левый бампер
+remote-rb = Правый бампер
+remote-view = Вид
+remote-menu = Меню
+remote-home = Домой
+remote-pair-title = Подключи телефон
+remote-pair-body = Введи шестизначный код с экрана телевизора.
+remote-pair-button = Подключить
+remote-wrong = Код неверный.
+remote-wait = Слишком много попыток. Подожди минуту.
+stats-summary = Часов на этой неделе: { $week }, в этом году: { $year }
+voice-listening = Слушаю…
+voice-unavailable = Голос недоступен. Включи распознавание речи в настройках Windows.
+web-bad-address = Похоже, адрес неверный.
+set-test-versions = Предлагать и тестовые версии

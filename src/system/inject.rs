@@ -5,7 +5,8 @@ use windows::Win32::UI::Input::KeyboardAndMouse::{
     KEYEVENTF_UNICODE,
     MOUSE_EVENT_FLAGS, MOUSEEVENTF_HWHEEL, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
     MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP, MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN,
-    MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL, MOUSEINPUT, SendInput, VIRTUAL_KEY, VK_LWIN, VK_SNAPSHOT,
+    MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL, MOUSEINPUT, SendInput, VIRTUAL_KEY, VK_G, VK_H, VK_LWIN, VK_MENU,
+    VK_SNAPSHOT,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -100,6 +101,16 @@ pub fn chord(keys: &[VIRTUAL_KEY]) {
 /// Win + Print Screen: Windows saves the shot to Pictures\Screenshots.
 pub fn screenshot() {
     chord(&[VK_LWIN, VK_SNAPSHOT]);
+}
+
+/// Win + Alt + G: the Game Bar saves the last 30 seconds of play.
+pub fn game_clip() {
+    chord(&[VK_LWIN, VK_MENU, VK_G]);
+}
+
+/// Win + H: Windows dictation, typing what you say into the focused text box.
+pub fn dictate() {
+    chord(&[VK_LWIN, VK_H]);
 }
 
 #[cfg(test)]

@@ -11,7 +11,9 @@ pub fn Home() -> Element {
     let games = shell.jump_back_in();
     let apps: Vec<_> = shell.library.read().apps.iter().take(12).cloned().collect();
     let focused = shell.focused.read().clone();
-    let hero = focused.and_then(|id| shell.find(&id)).or_else(|| games.first().cloned());
+    // Only what's on this screen leads the hero; focus left over from another tab doesn't.
+    let here = |id: &String| games.iter().chain(&apps).any(|t| &t.id == id);
+    let hero = focused.filter(here).and_then(|id| shell.find(&id)).or_else(|| games.first().cloned());
     let total = games.len();
     let position = hero.as_ref().and_then(|h| games.iter().position(|g| g.id == h.id));
     let empty = games.is_empty() && !*shell.scanning.read();

@@ -3,7 +3,8 @@
 // need hand-written focus maps. Anything with [data-nav] can take focus.
 //
 // Rust → JS: {t:"move",d}, {t:"activate"}, {t:"page",d}, {t:"tilt",x,y}, {t:"prefs",...}, {t:"sound",s}
-// JS → Rust: {t:"back"}, {t:"tab",d}, {t:"quick"}, {t:"more"}, {t:"search"}, {t:"slide",id,d}, {t:"type",k}, {t:"keyboard"}
+// JS → Rust: {t:"back"}, {t:"tab",d}, {t:"quick"}, {t:"more"}, {t:"search"}, {t:"slide",id,d}, {t:"type",k}, {t:"keyboard"},
+//            {t:"recovery"}, {t:"os-motion",reduced}
 
 // Script errors show up in JoyOS's own log instead of disappearing.
 window.addEventListener("error", (e) => dioxus.send({ t: "log", m: `${e.message} @ ${e.filename}:${e.lineno}` }));
@@ -13,7 +14,15 @@ window.addEventListener("unhandledrejection", (e) => dioxus.send({ t: "log", m: 
 window.joySend = (msg) => dioxus.send(msg);
 
 const prefs = { sounds: true, reduced: false, lang: "en", rtl: false };
+// Screens are rebuilt on every tab change, so focus is remembered by what an
+// element is (its id or label), not by the element itself.
 const memory = new Map();
+const rowMemory = new Map();
+const navKey = (el) => el.dataset.id || el.getAttribute("aria-label") || el.textContent.trim().slice(0, 60);
+const findByKey = (root, key) => key && candidates(root).find((el) => navKey(el) === key);
+
+// Tell Rust what the system asks for, so first-run setup can start with less motion.
+dioxus.send({ t: "os-motion", reduced: matchMedia("(prefers-reduced-motion: reduce)").matches });
 
 // The lens filter used by `.glass.lens`: low-frequency noise bends what's behind
 // the glass, like looking through a thick pane.
@@ -82,9 +91,8 @@ function settle() {
     settleQueued = false;
     const root = scope();
     if (current(root)) return;
-    const remembered = memory.get(scopeKey(root));
     const target =
-      (remembered?.isConnected && root.contains(remembered) && visible(remembered) && remembered) ||
+      findByKey(root, memory.get(scopeKey(root))) ||
       root.querySelector("[data-autofocus]") ||
       candidates(root)[0];
     if (target) place(target, false);
@@ -168,7 +176,7 @@ function bump(el, dir) {
   setTimeout(() => el.classList.remove(`bump-${dir}`), 320);
 }
 
-function move(dir) {
+function move(dir, quiet = false) {
   const root = scope();
   const from = current(root);
   if (!from) return settle();
@@ -185,9 +193,14 @@ function move(dir) {
   // Entering a different row goes back to where you were in it, like a TV.
   if (target && (dir === "up" || dir === "down")) {
     const row = target.closest("[data-row]");
-    if (row && row !== from.closest("[data-row]") && row.__last?.isConnected && visible(row.__last)) target = row.__last;
+    if (row && row !== from.closest("[data-row]")) {
+      const last = findByKey(row, rowMemory.get(`${scopeKey(root)}/${row.dataset.row}`));
+      if (last) target = last;
+    }
   }
-  target ? place(target) : bump(from, dir);
+  if (target) place(target, !quiet);
+  else if (!quiet) bump(from, dir);
+  return !!target;
 }
 
 function activate() {
@@ -226,16 +239,21 @@ function tickClock() {
 setInterval(tickClock, 5000);
 
 // ---------- wiring ----------
-new MutationObserver(() => { settle(); tickClock(); }).observe(document.body, { childList: true, subtree: true });
+// A new clock only needs filling in once; the timer keeps it current after that.
+new MutationObserver(() => {
+  settle();
+  if (document.querySelector("[data-clock]:empty, [data-date]:empty")) tickClock();
+}).observe(document.body, { childList: true, subtree: true });
 
 document.addEventListener("focusin", (e) => {
   const el = e.target;
   if (!(el instanceof HTMLElement) || !el.matches("[data-nav]")) return;
   mark(el);
   const root = scope();
-  if (root.contains(el)) memory.set(scopeKey(root), el);
+  if (!root.contains(el)) return;
+  memory.set(scopeKey(root), navKey(el));
   const row = el.closest("[data-row]");
-  if (row) row.__last = el;
+  if (row) rowMemory.set(`${scopeKey(root)}/${row.dataset.row}`, navKey(el));
 });
 
 // The mouse works too: hovering focuses, like moving with the stick.
@@ -254,10 +272,17 @@ document.addEventListener("keydown", (e) => {
     return dioxus.send({ t: "type", k: e.key === "Backspace" ? "\b" : e.key });
   }
   const send = (msg) => { e.preventDefault(); dioxus.send(msg); };
+  // The keyboard's way back to Windows, matching LB + RB + View + Start on a controller.
+  if (e.ctrlKey && e.altKey && e.shiftKey && e.code === "KeyD") return send({ t: "recovery" });
   if (e.key === "Escape" || e.key === "Backspace" || e.key === "BrowserBack") return send({ t: "back" });
-  if (e.key === "PageUp" || (e.key === "Tab" && e.shiftKey) || e.key === "q") return send({ t: "tab", d: -1 });
-  if (e.key === "PageDown" || e.key === "Tab" || e.key === "e") return send({ t: "tab", d: 1 });
-  if (e.key === "F1" || e.key === "ContextMenu" || e.key === "m") return send({ t: "quick" });
+  if (e.key === "PageUp" || (e.key === "Tab" && e.shiftKey)) return send({ t: "tab", d: -1 });
+  if (e.key === "PageDown" || e.key === "Tab") return send({ t: "tab", d: 1 });
+  if (e.key === "F1" || e.key === "ContextMenu") return send({ t: "quick" });
+  // Letter shortcuts are plain presses only, so Ctrl+E or a held key doesn't fire them.
+  if (e.ctrlKey || e.altKey || e.metaKey || e.repeat) return;
+  if (e.key === "q") return send({ t: "tab", d: -1 });
+  if (e.key === "e") return send({ t: "tab", d: 1 });
+  if (e.key === "m") return send({ t: "quick" });
   if (e.key === "/" || e.key === "f") return send({ t: "search" });
   if (e.key === "x") return send({ t: "more" });
 }, true);
@@ -272,7 +297,13 @@ while (true) {
   switch (msg.t) {
     case "move": move(msg.d); break;
     case "activate": activate(); break;
-    case "page": for (let i = 0; i < 4; i++) move(msg.d > 0 ? "down" : "up"); break;
+    case "page": {
+      // One tick for the whole jump, not four.
+      let moved = false;
+      for (let i = 0; i < 4; i++) moved = move(msg.d > 0 ? "down" : "up", true) || moved;
+      if (moved) sound("tick");
+      break;
+    }
     case "tilt": tilt(msg.x, msg.y); break;
     case "sound": sound(msg.s); break;
     case "prefs":

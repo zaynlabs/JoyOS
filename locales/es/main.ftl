@@ -20,7 +20,6 @@ action-menu = Menú
 action-tabs = Cambiar
 action-continue = Seguir
 action-done = Listo
-action-cancel = Cancelar
 games-count = { $count ->
     [one] 1 juego
    *[other] { $count } juegos
@@ -28,6 +27,7 @@ games-count = { $count ->
 filter-all = Todos
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = Jugados hace poco
 games-search = Busca un juego
 games-none = No hay nada con ese nombre.
@@ -42,10 +42,8 @@ when-days = { $n ->
     [one] hace 1 día
    *[other] hace { $n } días
 }
-apps-title = Apps
 apps-tip = En las apps, el mando funciona como ratón. Pulsa Start para volver.
 apps-files = Archivos
-quick-title = Menú rápido
 quick-sound = Sonido
 quick-brightness = Brillo
 quick-mouse = Mando como ratón
@@ -103,3 +101,130 @@ setup-pad-body = Pulsa A para seguir. El teclado también sirve.
 setup-finding = Buscando tus juegos
 setup-ready = Todo listo
 setup-start = Vamos
+
+## Ver
+tab-watch = Ver
+watch-lede = Streaming y vídeos a pantalla completa. Añade tus propias webs abajo.
+watch-add = Añadir una web
+action-remove = Quitar
+text-type-here = Escribe aquí
+key-voice = Voz
+toast-clip = Guardados los últimos 30 segundos.
+quick-clip = Guardar los últimos 30 segundos
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = Clásicos
+
+## Ajustes
+set-library = Juegos y apps
+set-art = Imágenes de juegos
+art-on = Activadas
+art-off = Desactivadas
+set-rom-add = Añadir una carpeta de juegos
+set-family = Familia
+family-playing = Quién juega
+family-everyone = Todos
+family-add = Añadir a alguien
+family-set-pin = Poner un PIN
+family-change-pin = Cambiar PIN
+family-limit = Hasta { $minutes } min al día
+family-no-limit = Sin límite diario
+stats-week = horas esta semana
+stats-year = horas este año
+stats-minutes = { $minutes } min
+set-connect = Conexiones
+conn-bluetooth = Bluetooth y dispositivos
+conn-wifi = Wi-Fi
+set-phone = Usar el móvil como mando
+phone-open = En tu móvil, abre { $address }
+phone-pin = Introduce el código { $pin }
+set-plugins = Complementos
+plugins-open = Abrir la carpeta de complementos
+set-plan = Plan
+plan-current = Tu plan: { $plan }
+plan-free = Gratis
+plan-plus = JoyOS Plus
+plan-business = Empresa
+plan-enter-key = Introducir una clave
+plan-activated = { $plan } está listo. ¡Gracias!
+plan-bad-key = Esa clave no funciona. Revísala e inténtalo de nuevo.
+plan-needs-plus = Necesita JoyOS Plus
+plan-needs-business = Necesita el plan Empresa
+kiosk-make = Usar JoyOS como escritorio completo
+kiosk-made = Listo. Lee los dos archivos y luego ejecuta cada uno como administrador.
+kiosk-failed = No se pudieron crear los scripts.
+set-crash = Guardar informes de errores en este PC
+set-crash-note = Solo se guardan aquí. No se envía nada.
+sync-folder = Carpeta compartida para los ajustes
+sync-now = Copiar ajustes ahora
+sync-pulled = Ajustes actualizados desde tu otro PC.
+sync-pushed = Ajustes guardados en la carpeta compartida.
+sync-same = Los ajustes ya están al día.
+sync-failed = No se pudo acceder a la carpeta compartida.
+update-address = Dirección de versiones nuevas
+update-available = JoyOS { $version } ya está disponible.
+update-get = Obtener { $version }
+set-scene = Fondo
+scene-still = Fijo
+scene-aurora = Aurora
+set-contrast = Más contraste
+set-text-large = Texto más grande
+theme-auto = Auto
+pad-battery = Batería del mando: { $pct } %
+pad-charging = Cargando
+member-added = Añadido.
+
+## PIN
+pin-ask = Introduce el PIN
+pin-set = Elige un PIN
+pin-clear = Borrar
+pin-wrong = Ese no es el PIN.
+pin-saved = PIN guardado.
+pin-switched = Juega { $name }.
+
+## Ajustes por juego y límites
+profile-default = Por defecto
+profile-needs-plus = Los ajustes por juego necesitan JoyOS Plus.
+detail-swap = Intercambiar A y B
+detail-power = Energía
+power-balanced = Equilibrado
+power-performance = Rendimiento
+power-saver = Ahorro de energía
+toast-time-up = Se acabó el tiempo de hoy para { $name }.
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = La clave de portadas no funciona. Revísala en Ajustes.
+key-latin = ABC
+phone-forget = Olvidar los teléfonos
+phone-forgot = Los teléfonos necesitarán el código nuevo.
+phone-paired = Teléfono conectado.
+pin-grown-up = El PIN de un adulto, por favor
+pin-not-saved = No se pudo guardar el PIN. Inténtalo otra vez.
+pin-typed = { $count } de 6 números
+pin-wait = Demasiados intentos. Espera { $seconds } segundos.
+recovery-title = Volver a Windows
+recovery-body = Abre el escritorio de Windows o mira cómo hacer que el PC vuelva a empezar con Windows.
+recovery-desktop = Abrir el escritorio de Windows
+recovery-script = Ver cómo volver a Windows
+remote-title = Mando
+remote-move = Mover
+remote-press = Pulsar
+remote-type = Escribir
+remote-send = Enviar
+remote-lost = Se perdió la tele. Revisa el wifi.
+remote-typing = Hay un cuadro de texto abierto. Escribe abajo.
+remote-lb = Botón izquierdo
+remote-rb = Botón derecho
+remote-view = Vista
+remote-menu = Menú
+remote-home = Inicio
+remote-pair-title = Conecta tu teléfono
+remote-pair-body = Escribe el código de seis cifras que ves en la tele.
+remote-pair-button = Conectar
+remote-wrong = Ese código no es correcto.
+remote-wait = Demasiados intentos. Espera un minuto.
+stats-summary = { $week } horas esta semana, { $year } horas este año
+voice-listening = Escuchando…
+voice-unavailable = La voz no está disponible. Activa la voz en los ajustes de Windows.
+web-bad-address = Esa dirección no parece correcta.
+set-test-versions = Ofrecer también versiones de prueba

@@ -19,6 +19,9 @@ pub fn Slider(id: &'static str, icon: &'static str, label: String, value: f32, s
             tabindex: "0",
             role: "slider",
             "aria-label": "{label}",
+            "aria-valuemin": "0",
+            "aria-valuemax": "100",
+            "aria-valuenow": "{(value.clamp(0.0, 1.0) * 100.0).round()}",
             "aria-valuetext": "{shown}",
             style: "--v: {value.clamp(0.0, 1.0)}",
             Icon { name: icon }

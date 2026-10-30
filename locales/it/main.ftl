@@ -20,7 +20,6 @@ action-menu = Menu
 action-tabs = Cambia
 action-continue = Continua
 action-done = Fatto
-action-cancel = Annulla
 games-count = { $count ->
     [one] 1 gioco
    *[other] { $count } giochi
@@ -28,6 +27,7 @@ games-count = { $count ->
 filter-all = Tutti
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = Giocati di recente
 games-search = Trova un gioco
 games-none = Nessun risultato.
@@ -42,10 +42,8 @@ when-days = { $n ->
     [one] 1 giorno fa
    *[other] { $n } giorni fa
 }
-apps-title = App
 apps-tip = Nelle app il controller fa da mouse. Premi Start per tornare.
 apps-files = File
-quick-title = Menu rapido
 quick-sound = Audio
 quick-brightness = Luminosità
 quick-mouse = Controller come mouse
@@ -103,3 +101,130 @@ setup-pad-body = Premi A per continuare. Va bene anche la tastiera.
 setup-finding = Cerco i tuoi giochi
 setup-ready = Tutto pronto
 setup-start = Andiamo
+
+## Guarda
+tab-watch = Guarda
+watch-lede = Streaming e video a schermo intero. Aggiungi qui sotto i tuoi siti.
+watch-add = Aggiungi un sito
+action-remove = Rimuovi
+text-type-here = Scrivi qui
+key-voice = Voce
+toast-clip = Salvati gli ultimi 30 secondi.
+quick-clip = Salva gli ultimi 30 secondi
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = Classici
+
+## Impostazioni
+set-library = Giochi e app
+set-art = Immagini dei giochi
+art-on = Attive
+art-off = Disattivate
+set-rom-add = Aggiungi una cartella di giochi
+set-family = Famiglia
+family-playing = Chi gioca
+family-everyone = Tutti
+family-add = Aggiungi una persona
+family-set-pin = Imposta un PIN
+family-change-pin = Cambia PIN
+family-limit = Fino a { $minutes } min al giorno
+family-no-limit = Nessun limite giornaliero
+stats-week = ore questa settimana
+stats-year = ore quest'anno
+stats-minutes = { $minutes } min
+set-connect = Connessioni
+conn-bluetooth = Bluetooth e dispositivi
+conn-wifi = Wi-Fi
+set-phone = Usa il telefono come telecomando
+phone-open = Sul telefono apri { $address }
+phone-pin = Inserisci il codice { $pin }
+set-plugins = Estensioni
+plugins-open = Apri la cartella delle estensioni
+set-plan = Piano
+plan-current = Il tuo piano: { $plan }
+plan-free = Gratuito
+plan-plus = JoyOS Plus
+plan-business = Business
+plan-enter-key = Inserisci una chiave
+plan-activated = { $plan } è pronto. Grazie!
+plan-bad-key = Questa chiave non funziona. Controllala e riprova.
+plan-needs-plus = Richiede JoyOS Plus
+plan-needs-business = Richiede il piano Business
+kiosk-make = Usa JoyOS come desktop completo
+kiosk-made = Pronto. Leggi i due file, poi avvia ognuno come amministratore.
+kiosk-failed = Impossibile creare gli script.
+set-crash = Salva i report degli errori su questo PC
+set-crash-note = Restano solo qui. Non viene inviato nulla.
+sync-folder = Cartella condivisa per le impostazioni
+sync-now = Copia le impostazioni ora
+sync-pulled = Impostazioni aggiornate dall'altro PC.
+sync-pushed = Impostazioni salvate nella cartella condivisa.
+sync-same = Le impostazioni sono già aggiornate.
+sync-failed = Impossibile raggiungere la cartella condivisa.
+update-address = Indirizzo delle nuove versioni
+update-available = È uscita JoyOS { $version }.
+update-get = Scarica { $version }
+set-scene = Sfondo
+scene-still = Fisso
+scene-aurora = Aurora
+set-contrast = Contrasto più forte
+set-text-large = Testo più grande
+theme-auto = Auto
+pad-battery = Batteria del controller: { $pct }%
+pad-charging = In carica
+member-added = Aggiunto.
+
+## PIN
+pin-ask = Inserisci il PIN
+pin-set = Scegli un PIN
+pin-clear = Cancella
+pin-wrong = Non è il PIN giusto.
+pin-saved = PIN salvato.
+pin-switched = Gioca { $name }.
+
+## Impostazioni per gioco e limiti
+profile-default = Predefinito
+profile-needs-plus = Le impostazioni per gioco richiedono JoyOS Plus.
+detail-swap = Scambia A e B
+detail-power = Energia
+power-balanced = Bilanciato
+power-performance = Prestazioni
+power-saver = Risparmio energetico
+toast-time-up = Il tempo di oggi per { $name } è finito.
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = La chiave delle copertine non funziona. Controllala nelle Impostazioni.
+key-latin = ABC
+phone-forget = Dimentica i telefoni
+phone-forgot = I telefoni dovranno usare il nuovo codice.
+phone-paired = Telefono collegato.
+pin-grown-up = Il PIN di un adulto, per favore
+pin-not-saved = Non è stato possibile salvare il PIN. Riprova.
+pin-typed = { $count } cifre su 6
+pin-wait = Troppi tentativi. Aspetta { $seconds } secondi.
+recovery-title = Torna a Windows
+recovery-body = Apri il desktop di Windows, oppure guarda come far ripartire il PC con Windows.
+recovery-desktop = Apri il desktop di Windows
+recovery-script = Mostra come rimettere Windows
+remote-title = Telecomando
+remote-move = Muovi
+remote-press = Premi
+remote-type = Scrivi
+remote-send = Invia
+remote-lost = La TV non risponde. Controlla il Wi-Fi.
+remote-typing = C'è una casella di testo aperta. Scrivi qui sotto.
+remote-lb = Dorsale sinistro
+remote-rb = Dorsale destro
+remote-view = Visualizza
+remote-menu = Menu
+remote-home = Home
+remote-pair-title = Collega il telefono
+remote-pair-body = Inserisci il codice di sei cifre che vedi sulla TV.
+remote-pair-button = Collega
+remote-wrong = Il codice non è giusto.
+remote-wait = Troppi tentativi. Aspetta un minuto.
+stats-summary = { $week } ore questa settimana, { $year } ore quest'anno
+voice-listening = Ti ascolto…
+voice-unavailable = La voce non è disponibile. Attiva il riconoscimento vocale nelle impostazioni di Windows.
+web-bad-address = Questo indirizzo non sembra giusto.
+set-test-versions = Proponi anche le versioni di prova

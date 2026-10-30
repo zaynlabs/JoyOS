@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="{lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>JoyOS</title>
+<style>
+  :root { --ink: #f4f1ea; --dim: rgba(244, 241, 234, .62); --bg: #0b0b0d; --glass: rgba(255, 255, 255, .08); --rim: rgba(255, 255, 255, .16); }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: var(--bg); color: var(--ink); font: 16px/1.4 system-ui, sans-serif; }
+  main { width: 100%; max-width: 360px; }
+  h1 { font: 400 34px/1.1 Georgia, "Times New Roman", serif; font-style: italic; margin: 0 0 8px; }
+  p { color: var(--dim); margin: 0 0 24px; }
+  form { display: grid; gap: 12px; }
+  input { width: 100%; font: 600 30px/1 system-ui, sans-serif; letter-spacing: .3em; text-align: center; padding: 16px; border-radius: 18px; border: 1px solid var(--rim); background: var(--glass); color: var(--ink); }
+  input:focus { outline: 2px solid var(--ink); outline-offset: 2px; }
+  button { font: 600 17px/1 system-ui, sans-serif; padding: 16px; border-radius: 999px; border: 1px solid var(--rim); background: var(--ink); color: var(--bg); }
+  .error { color: #ff8a7a; min-height: 1.4em; margin: 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1 data-w="pairTitle"></h1>
+  <p data-w="pairBody"></p>
+  <form method="post" action="/pair">
+    <input name="pin" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required autofocus>
+    <button type="submit" data-w="pairButton"></button>
+    <p class="error" id="error" role="alert"></p>
+  </form>
+</main>
+<script>
+  const WORDS = /*WORDS*/{};
+  document.querySelectorAll("[data-w]").forEach((el) => { el.textContent = WORDS[el.dataset.w] || ""; });
+  document.querySelector("input").setAttribute("aria-label", WORDS.pairBody || "");
+  const why = location.search.slice(1);
+  if (why === "wrong" || why === "wait") document.getElementById("error").textContent = WORDS[why];
+</script>
+</body>
+</html>

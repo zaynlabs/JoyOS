@@ -16,6 +16,9 @@ struct Manifest {
     app_categories: Vec<String>,
     #[serde(default, rename = "bIsIncompleteInstall")]
     incomplete: bool,
+    /// Set on add-ons; they point at the game they belong to.
+    #[serde(default)]
+    main_game_app_name: Option<String>,
 }
 
 pub fn scan() -> Vec<Title> {
@@ -30,13 +33,16 @@ pub fn scan() -> Vec<Title> {
         .filter(|e| e.path().extension().is_some_and(|x| x.eq_ignore_ascii_case("item")))
         .filter_map(|e| std::fs::read_to_string(e.path()).ok())
         .filter_map(|text| from_manifest(&text))
+        // Uninstalled outside the launcher leaves the manifest behind.
+        .filter(|g| g.folder.as_ref().is_some_and(|f| f.is_dir()))
         .collect()
 }
 
 fn from_manifest(text: &str) -> Option<Title> {
     let m: Manifest = serde_json::from_str(text).ok()?;
-    let is_game = m.app_categories.is_empty() || m.app_categories.iter().any(|c| c == "games");
-    if m.incomplete || !is_game {
+    let is_game = m.app_categories.iter().any(|c| c == "games");
+    let is_addon = m.main_game_app_name.as_ref().is_some_and(|main| *main != m.app_name);
+    if m.incomplete || !is_game || is_addon {
         return None;
     }
     Some(Title {
@@ -47,6 +53,8 @@ fn from_manifest(text: &str) -> Option<Title> {
         ),
         name: m.display_name,
         source: Source::Epic,
+        emulator: None,
+        args: None,
         cover: None,
         hero: None,
         logo: None,
@@ -72,5 +80,13 @@ mod tests {
     fn skips_unfinished_installs() {
         let text = r#"{"DisplayName":"X","AppName":"x","CatalogNamespace":"n","CatalogItemId":"i","InstallLocation":"","bIsIncompleteInstall":true}"#;
         assert!(from_manifest(text).is_none());
+    }
+
+    #[test]
+    fn skips_add_ons_and_uncategorised_items() {
+        let addon = r#"{"DisplayName":"DLC","AppName":"dlc","MainGameAppName":"Dill","CatalogNamespace":"n","CatalogItemId":"i","InstallLocation":"","AppCategories":["games"]}"#;
+        assert!(from_manifest(addon).is_none());
+        let bare = r#"{"DisplayName":"X","AppName":"x","CatalogNamespace":"n","CatalogItemId":"i","InstallLocation":""}"#;
+        assert!(from_manifest(bare).is_none());
     }
 }

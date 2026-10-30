@@ -15,15 +15,15 @@ use serde_json::json;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_BACK, VK_LEFT, VK_RETURN, VK_RIGHT};
 
 use crate::input::{Dir, Family, Pad, SHARED};
-use crate::settings::Theme;
 use crate::system::{inject, window};
 use crate::ui::keyboard::layout::{self, DIGITS, LATIN, SYMBOLS};
 use crate::ui::{Glyph, PadFamily};
-use crate::{i18n, t};
+use crate::{i18n, t, words};
 
 #[derive(Clone, Debug)]
 pub enum Msg {
-    Show { theme: Theme, sounds: bool, reduced: bool, family: Family },
+    /// `look` is the same attribute script the main window uses, so theme, contrast and text size match.
+    Show { look: String, sounds: bool, reduced: bool, family: Family, words: Vec<String> },
     Hide,
     Move(Dir),
     Press(Pad),
@@ -58,7 +58,7 @@ pub fn create() {
     if TX.set(tx).is_err() {
         return;
     }
-    *RX.lock().unwrap() = Some(rx);
+    *RX.lock().unwrap_or_else(|e| e.into_inner()) = Some(rx);
 
     use dioxus::desktop::tao::dpi::PhysicalPosition;
     use dioxus::desktop::tao::platform::windows::{WindowBuilderExtWindows, WindowExtWindows};
@@ -71,7 +71,7 @@ pub fn create() {
         .with_focused(false)
         .with_skip_taskbar(true)
         .with_position(PhysicalPosition::new(-32000, -32000))
-        .with_inner_size(LogicalSize::new(1200.0, 460.0));
+        .with_inner_size(LogicalSize::new(1200.0, 520.0));
     let cfg: Config = crate::config(builder, (0, 0, 0, 0), "<script>document.documentElement.dataset.window='osk'</script>")
         .with_on_window(|w, _| {
             let hwnd = w.hwnd();
@@ -98,6 +98,10 @@ struct Board {
     shift: Signal<bool>,
     symbols: Signal<bool>,
     latin: Signal<bool>,
+    /// The word being typed into the app underneath, for suggestions.
+    fragment: Signal<String>,
+    /// Words from JoyOS's history, passed in when the keyboard opens.
+    words: Signal<Vec<String>>,
     bridge: document::Eval,
 }
 
@@ -119,21 +123,41 @@ impl Board {
     fn type_char(mut self, ch: char) {
         let text = if (self.shift)() { layout::upper(ch, i18n::current().code) } else { ch.to_string() };
         inject::text(&text);
+        self.fragment.write().push_str(&text);
         if (self.shift)() {
             self.shift.set(false);
         }
+    }
+
+    fn space(mut self) {
+        inject::text(" ");
+        self.fragment.set(String::new());
+    }
+
+    fn delete(mut self) {
+        tap(VK_BACK);
+        self.fragment.write().pop();
+        self.sound("back");
+    }
+
+    /// Replaces the word being typed with `word`, the way tapping a suggestion does.
+    fn complete(mut self, word: &str) {
+        let typed = self.fragment.read().chars().count();
+        for _ in 0..typed {
+            tap(VK_BACK);
+        }
+        inject::text(&format!("{word} "));
+        self.fragment.set(String::new());
+        self.sound("select");
     }
 
     fn press(mut self, pad: Pad) {
         match pad {
             Pad::A => self.send(json!({ "t": "activate" })),
             Pad::B | Pad::Start => self.close(),
-            Pad::X => {
-                tap(VK_BACK);
-                self.sound("back");
-            }
+            Pad::X => self.delete(),
             Pad::Y => {
-                inject::text(" ");
+                self.space();
                 self.sound("tick");
             }
             Pad::Lt => {
@@ -142,10 +166,18 @@ impl Board {
             }
             Pad::Rt => {
                 tap(VK_RETURN);
+                self.fragment.set(String::new());
                 self.sound("select");
             }
-            Pad::Lb => tap(VK_LEFT),
-            Pad::Rb => tap(VK_RIGHT),
+            // Moving the cursor leaves the word behind, so a suggestion mustn't erase it.
+            Pad::Lb => {
+                tap(VK_LEFT);
+                self.fragment.set(String::new());
+            }
+            Pad::Rb => {
+                tap(VK_RIGHT);
+                self.fragment.set(String::new());
+            }
             Pad::Select => {
                 self.symbols.set(!(self.symbols)());
                 self.sound("tick");
@@ -161,6 +193,8 @@ pub fn Osk() -> Element {
         shift: Signal::new(false),
         symbols: Signal::new(false),
         latin: Signal::new(false),
+        fragment: Signal::new(String::new()),
+        words: Signal::new(vec![]),
         bridge,
     });
     let family = use_context_provider(|| PadFamily(Signal::new(Family::default())));
@@ -179,23 +213,23 @@ pub fn Osk() -> Element {
     });
 
     use_future(move || async move {
-        let rx = RX.lock().unwrap().take();
+        let rx = RX.lock().unwrap_or_else(|e| e.into_inner()).take();
         let Some(mut rx) = rx else { return };
         let mut family = family.0;
         let (mut shift, mut symbols) = (board.shift, board.symbols);
+        let mut words_signal = board.words;
         while let Some(msg) = rx.next().await {
             match msg {
-                Msg::Show { theme, sounds, reduced, family: f } => {
+                Msg::Show { look, sounds, reduced, family: f, words: history } => {
                     let lang = i18n::current();
-                    let theme = if theme == Theme::Light { "light" } else { "dark" };
-                    let motion = if reduced { "less" } else { "full" };
-                    document::eval(&format!(
-                        "document.documentElement.dataset.theme='{theme}';document.documentElement.dataset.motion='{motion}';"
-                    ));
+                    document::eval(&look);
                     board.send(json!({ "t": "prefs", "sounds": sounds, "reduced": reduced, "lang": lang.code, "rtl": lang.rtl }));
                     family.set(f);
                     shift.set(false);
                     symbols.set(false);
+                    words_signal.set(history);
+                    let mut fragment = board.fragment;
+                    fragment.set(String::new());
                     let next = *shown.peek() + 1;
                     shown.set(next);
                     SHARED.typing.store(true, Ordering::Relaxed);
@@ -236,9 +270,17 @@ pub fn Osk() -> Element {
     let script_label = if latin { layout::script_sample(code) } else { "ABC" };
     let lang = i18n::current().code;
     let dir = if i18n::current().rtl { "rtl" } else { "ltr" };
+    let suggestions = words::suggest(&(board.words)(), &(board.fragment)());
 
     rsx! {
         div { class: "osk glass", "data-main": "osk", lang, dir,
+            if !suggestions.is_empty() {
+                div { class: "suggest", "data-row": "suggest",
+                    for word in suggestions {
+                        button { class: "chip", "data-nav": "", "data-sound": "tick", onclick: move |_| board.complete(&word), "{word}" }
+                    }
+                }
+            }
             for n in [shown()] {
                 div { key: "{n}", class: "keys",
                     div { class: "krow", "data-row": "digits",
@@ -274,9 +316,14 @@ pub fn Osk() -> Element {
                                 "{script_label}"
                             }
                         }
-                        button { class: "key space", "data-nav": "", "data-sound": "tick", onclick: move |_| inject::text(" "), {t!("key-space")} }
-                        button { class: "key wide", "data-nav": "", "data-sound": "back", onclick: move |_| tap(VK_BACK), {t!("key-delete")} }
-                        button { class: "key wide", "data-nav": "", onclick: move |_| tap(VK_RETURN), {t!("key-enter")} }
+                        button { class: "key space", "data-nav": "", "data-sound": "tick", onclick: move |_| board.space(), {t!("key-space")} }
+                        button { class: "key wide", "data-nav": "", "data-sound": "back", onclick: move |_| board.delete(), {t!("key-delete")} }
+                        button { class: "key wide", "data-nav": "", onclick: move |_| {
+                            tap(VK_RETURN);
+                            let mut fragment = board.fragment;
+                            fragment.set(String::new());
+                        }, {t!("key-enter")} }
+                        button { class: "key wide", "data-nav": "", "data-sound": "select", onclick: move |_| inject::dictate(), {t!("key-voice")} }
                         button { class: "key wide on", "data-nav": "", "data-sound": "back", onclick: move |_| board.close(), {t!("action-done")} }
                     }
                 }

@@ -10,8 +10,10 @@ readme = "README.md"
 
 [dependencies]
 anyhow = "1"
+base64 = "0.22"
 dioxus = { version = "0.7.10", default-features = false, features = ["desktop", "launch", "lib"] }
 directories = "6"
+ed25519-dalek = "2"
 fluent-bundle = "0.16"
 futures-channel = "0.3"
 futures-util = "0.3"
@@ -19,14 +21,21 @@ gilrs = { version = "0.11", default-features = false, features = ["xinput"] }
 image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+sha2 = "0.10"
 sys-locale = "0.3"
-tokio = { version = "1", features = ["time"] }
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
 toml = "1"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ureq = { version = "3", features = ["json"] }
 unic-langid = "0.9"
-windows = { version = "0.62", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse", "Win32_UI_Shell", "Win32_System_Com", "Win32_System_Power", "Win32_System_Threading", "Win32_System_Registry", "Win32_Media_Audio", "Win32_Media_Audio_Endpoints", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Com_StructuredStorage", "Win32_System_Variant", "Win32_System_SystemInformation", "Win32_UI_Accessibility", "Win32_Graphics_Dwm", "Win32_Graphics_Gdi"] }
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse", "Win32_UI_Shell", "Win32_System_Com", "Win32_System_Power", "Win32_System_Threading", "Win32_System_Registry", "Win32_Media_Audio", "Win32_Media_Audio_Endpoints", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Com_StructuredStorage", "Win32_System_Variant", "Win32_System_SystemInformation", "Win32_UI_Accessibility", "Win32_Graphics_Dwm", "Win32_Graphics_Gdi", "Win32_Security_Cryptography", "Win32_Storage_FileSystem", "Win32_UI_Controls", "Foundation", "Globalization", "Media_SpeechRecognition"] }
 windows-core = "0.62"
+argon2 = { version = "0.6", default-features = false, features = ["alloc"] }
+semver = "1"
+url = "2"
+subtle = "2"
+axum = { version = "0.8", default-features = false, features = ["ws", "http1", "tokio", "json", "query"] }
 
 [build-dependencies]
 image = { version = "0.25", default-features = false, features = ["png", "ico"] }
@@ -34,3 +43,22 @@ winresource = "0.1"
 
 [dev-dependencies]
 fluent-syntax = "0.12"
+
+# Installers, built with `cargo packager --release` (install it once with
+# `cargo install cargo-packager --locked`). It fetches NSIS and WiX by itself.
+# The output isn't code-signed; signing needs a certificate and is a manual step.
+[package.metadata.packager]
+product-name = "JoyOS"
+identifier = "com.zaynlabs.joyos"
+publisher = "Zayn Labs"
+icons = ["assets/images/icon.png"]
+formats = ["nsis", "wix"]
+out-dir = "target/release"
+before-packaging-command = "cargo build --release"
+binaries = [{ path = "joyos", main = true }]
+
+# Per-user setup: no admin prompt, and it lands next to the user's own settings.
+[package.metadata.packager.nsis]
+install-mode = "currentUser"
+# Only JoyOS's own folders: %APPDATA%\JoyOS also holds files that aren't ours.
+appdata-paths = ["$LOCALAPPDATA/JoyOS/JoyOS", "$APPDATA/JoyOS/JoyOS"]

@@ -5,11 +5,14 @@ pub mod detail;
 pub mod games;
 pub mod home;
 pub mod keyboard;
+pub mod pin;
 pub mod power;
 pub mod quick;
+pub mod recovery;
 pub mod settings;
 pub mod setup;
 pub mod sliders;
+pub mod watch;
 
 use dioxus::prelude::*;
 
@@ -61,6 +64,8 @@ fn icon_path(name: &str) -> &'static str {
         "mouse" => "M12 3a5.5 5.5 0 0 0-5.5 5.5v7a5.5 5.5 0 0 0 11 0v-7A5.5 5.5 0 0 0 12 3zM12 7v3",
         "close" => "M6 6l12 12M18 6L6 18",
         "camera" => "M4 8.5h3l1.5-2.5h7L17 8.5h3v10H4zM12 10.5a3 3 0 1 0 0 6a3 3 0 1 0 0-6z",
+        "clip" => "M3.5 7h12v10h-12zM15.5 10.5l5-3v9l-5-3M7 4.5l1.5 2.5M12 4.5l1.5 2.5",
+        "mic" => "M12 3.5a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0v-5a3 3 0 0 0-3-3zM6 11a6 6 0 0 0 12 0M12 17v3.5",
         "keyboard" => "M3 6.5h18v11H3zM6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M8 14h8",
         "power" => "M12 3v8M7 5.8a7.5 7.5 0 1 0 10 0",
         "moon" => "M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10z",
@@ -123,7 +128,7 @@ pub fn Glyph(pad: Pad) -> Element {
         if let Some(d) = shape {
             return rsx! {
                 span { class: "glyph",
-                    svg { view_box: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "2.4", stroke_linejoin: "round", path { d } }
+                    svg { view_box: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "2.4", stroke_linejoin: "round", "aria-hidden": "true", path { d } }
                 }
             };
         }
@@ -182,7 +187,8 @@ pub fn Backdrop() -> Element {
             let title = id.and_then(|id| shell.find(&id));
             let accent = title.as_ref().map(|t| t.accent.css()).unwrap_or_else(|| "rgb(226 150 92)".into());
             document::eval(&format!("document.documentElement.style.setProperty('--accent', '{accent}')"));
-            let art = title.and_then(|t| t.hero.or(t.cover));
+            // An app's cover is its small icon, which would blow up across the screen.
+            let art = title.and_then(|t| if t.source == Source::App { t.hero } else { t.hero.or(t.cover) });
             let mut list = arts.write();
             match art {
                 Some(url) if list.last().map(|(_, u)| u) != Some(&url) => {
@@ -222,11 +228,13 @@ pub fn TopBar() -> Element {
                 span { class: "joy", "Joy" }
                 span { class: "os", "OS" }
             }
-            nav { class: "tabs glass lens", style: "--i: {index}; --n: {Tab::ALL.len()}",
-                div { class: "lens-dot" }
+            nav { class: "tabs glass lens", role: "tablist", style: "--i: {index}; --n: {Tab::ALL.len()}",
+                div { class: "lens-dot", "aria-hidden": "true" }
                 for tab in Tab::ALL {
                     button {
                         class: "tab",
+                        role: "tab",
+                        "aria-selected": if tab == current { "true" } else { "false" },
                         "aria-current": if tab == current { "true" } else { "false" },
                         onclick: move |_| shell.set_tab(tab),
                         "{tab.label()}"
@@ -235,7 +243,7 @@ pub fn TopBar() -> Element {
             }
             div { class: "status",
                 if let Some(name) = &status.wifi {
-                    span { title: "{name}", Icon { name: "wifi" } }
+                    span { title: "{name}", role: "img", "aria-label": "{name}", Icon { name: "wifi" } }
                 }
                 if let Some(pct) = status.battery {
                     Battery { pct, charging: status.charging }
@@ -251,7 +259,7 @@ fn Battery(pct: u8, charging: bool) -> Element {
     let w = (pct as f32 / 100.0 * 13.0).max(1.5);
     rsx! {
         span { style: "display:flex;align-items:center;gap:6px",
-            svg { view_box: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "1.6",
+            svg { view_box: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "1.6", "aria-hidden": "true",
                 rect { x: "2.5", y: "7.5", width: "17", height: "9", rx: "2.5" }
                 path { d: "M21.5 10.5v3", stroke_linecap: "round" }
                 rect { x: "4.5", y: "9.5", width: "{w}", height: "5", rx: "1", fill: if charging { "#7bd88f" } else { "currentColor" }, stroke: "none" }
@@ -265,13 +273,16 @@ fn Battery(pct: u8, charging: bool) -> Element {
 pub fn View() -> Element {
     let shell = use_context::<Shell>();
     let tab = *shell.tab.read();
+    // While a panel is open, the screen behind it can't be reached by focus or by screen readers.
+    let covered = !shell.layers.read().is_empty() || !shell.settings.read().set_up;
     rsx! {
-        main { class: "view", "data-main": "{tab:?}",
+        main { class: "view", "data-main": "{tab:?}", inert: covered.then_some("true"),
             for t in [tab] {
                 div { key: "{t:?}", class: "screen",
                     match t {
                         Tab::Home => rsx! { home::Home {} },
                         Tab::Games => rsx! { games::Games {} },
+                        Tab::Watch => rsx! { watch::Watch {} },
                         Tab::Apps => rsx! { apps::Apps {} },
                         Tab::Settings => rsx! { settings::SettingsView {} },
                     }
@@ -334,7 +345,7 @@ pub fn HintBar() -> Element {
 pub fn Toasts() -> Element {
     let shell = use_context::<Shell>();
     rsx! {
-        div { class: "toasts", "aria-live": "polite",
+        div { class: "toasts", role: "status", "aria-live": "polite",
             for (id, text) in shell.toasts.read().iter().cloned() {
                 div { key: "{id}", class: "toast glass", "{text}" }
             }
@@ -391,7 +402,11 @@ pub fn AppChip(title: Title, k: usize) -> Element {
             style: "--tile-accent: {title.accent.css()}; --k: {k}",
             onfocus: move |_| shell.focused.set(Some(id.clone())),
             onclick: move |_| shell.launch(&launch),
-            span { class: "mono", {initial(&title.name)} }
+            if let Some(icon) = title.cover.clone() {
+                img { class: "app-icon", src: icon, alt: "" }
+            } else {
+                span { class: "mono", {initial(&title.name)} }
+            }
             "{title.name}"
         }
     }
@@ -401,6 +416,10 @@ pub fn source_label(source: Source) -> String {
     match source {
         Source::Steam => t!("filter-steam"),
         Source::Epic => t!("filter-epic"),
+        Source::Gog => t!("filter-gog"),
+        Source::Ubisoft => t!("filter-ubisoft"),
+        Source::Xbox => t!("filter-xbox"),
+        Source::Rom => t!("filter-roms"),
         Source::App => t!("tab-apps"),
     }
 }

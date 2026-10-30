@@ -20,7 +20,6 @@ action-menu = Menü
 action-tabs = Değiştir
 action-continue = Devam
 action-done = Tamam
-action-cancel = Vazgeç
 games-count = { $count ->
     [one] 1 oyun
    *[other] { $count } oyun
@@ -28,6 +27,7 @@ games-count = { $count ->
 filter-all = Tümü
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = Son oynananlar
 games-search = Oyun bul
 games-none = Eşleşen bir şey yok.
@@ -42,10 +42,8 @@ when-days = { $n ->
     [one] 1 gün önce
    *[other] { $n } gün önce
 }
-apps-title = Uygulamalar
 apps-tip = Uygulamalarda kumanda fare gibi çalışır. Geri dönmek için Start’a bas.
 apps-files = Dosyalar
-quick-title = Hızlı menü
 quick-sound = Ses
 quick-brightness = Parlaklık
 quick-mouse = Kumandayı fare yap
@@ -103,3 +101,130 @@ setup-pad-body = Devam etmek için A’ya bas. Klavye de olur.
 setup-finding = Oyunların aranıyor
 setup-ready = Her şey hazır
 setup-start = Hadi başlayalım
+
+## İzle
+tab-watch = İzle
+watch-lede = Yayınlar ve videolar tam ekranda. Aşağıdan kendi sitelerini ekleyebilirsin.
+watch-add = Site ekle
+action-remove = Kaldır
+text-type-here = Buraya yaz
+key-voice = Ses
+toast-clip = Son 30 saniye kaydedildi.
+quick-clip = Son 30 saniyeyi kaydet
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = Klasikler
+
+## Ayarlar
+set-library = Oyunlar ve uygulamalar
+set-art = Oyun görselleri
+art-on = Açık
+art-off = Kapalı
+set-rom-add = Oyun klasörü ekle
+set-family = Aile
+family-playing = Kim oynuyor
+family-everyone = Herkes
+family-add = Biri ekle
+family-set-pin = PIN belirle
+family-change-pin = PIN'i değiştir
+family-limit = Günde en fazla { $minutes } dk
+family-no-limit = Günlük sınır yok
+stats-week = bu haftaki saat
+stats-year = bu yılki saat
+stats-minutes = { $minutes } dk
+set-connect = Bağlantılar
+conn-bluetooth = Bluetooth ve cihazlar
+conn-wifi = Wi-Fi
+set-phone = Telefonu kumanda olarak kullan
+phone-open = Telefonunda { $address } adresini aç
+phone-pin = { $pin } kodunu gir
+set-plugins = Eklentiler
+plugins-open = Eklentiler klasörünü aç
+set-plan = Plan
+plan-current = Planın: { $plan }
+plan-free = Ücretsiz
+plan-plus = JoyOS Plus
+plan-business = İşletme
+plan-enter-key = Anahtar gir
+plan-activated = { $plan } hazır. Teşekkürler!
+plan-bad-key = Bu anahtar çalışmıyor. Kontrol edip yeniden dene.
+plan-needs-plus = JoyOS Plus gerekiyor
+plan-needs-business = İşletme planı gerekiyor
+kiosk-make = JoyOS'u tüm masaüstü yap
+kiosk-made = Hazır. Önce iki dosyayı da oku, sonra her birini yönetici olarak çalıştır.
+kiosk-failed = Betikler oluşturulamadı.
+set-crash = Bu bilgisayarda hata raporlarını kaydet
+set-crash-note = Sadece burada kalır. Hiçbir şey gönderilmez.
+sync-folder = Ayarların paylaşılan klasörü
+sync-now = Ayarları şimdi kopyala
+sync-pulled = Ayarlar diğer bilgisayarından güncellendi.
+sync-pushed = Ayarlar paylaşılan klasöre kaydedildi.
+sync-same = Ayarlar zaten güncel.
+sync-failed = Paylaşılan klasöre ulaşılamadı.
+update-address = Yeni sürümlerin adresi
+update-available = JoyOS { $version } çıktı.
+update-get = { $version } indir
+set-scene = Arka plan
+scene-still = Durgun
+scene-aurora = Kuzey ışıkları
+set-contrast = Daha güçlü kontrast
+set-text-large = Daha büyük yazı
+theme-auto = Otomatik
+pad-battery = Kumanda pili: { $pct }%
+pad-charging = Şarj oluyor
+member-added = Eklendi.
+
+## PIN
+pin-ask = PIN'i gir
+pin-set = Bir PIN seç
+pin-clear = Temizle
+pin-wrong = Bu PIN doğru değil.
+pin-saved = PIN kaydedildi.
+pin-switched = { $name } oynuyor.
+
+## Oyun başına ayarlar ve süre sınırları
+profile-default = Varsayılan
+profile-needs-plus = Oyun başına ayarlar JoyOS Plus gerektirir.
+detail-swap = A ve B'yi değiştir
+detail-power = Güç
+power-balanced = Dengeli
+power-performance = Performans
+power-saver = Pil tasarrufu
+toast-time-up = { $name } için bugünlük süre doldu.
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = Kapak anahtarı çalışmıyor. Ayarlar'dan kontrol et.
+key-latin = ABC
+phone-forget = Bağlı telefonları unut
+phone-forgot = Telefonlar yeni kodu girmeli.
+phone-paired = Telefon bağlandı.
+pin-grown-up = Bir yetişkinin PIN'i lütfen
+pin-not-saved = PIN kaydedilemedi. Tekrar dene.
+pin-typed = 6 rakamdan { $count } tanesi
+pin-wait = Çok fazla deneme. { $seconds } saniye bekle.
+recovery-title = Windows'a dön
+recovery-body = Windows masaüstünü aç ya da bilgisayarın yeniden Windows ile açılmasını nasıl sağlayacağını gör.
+recovery-desktop = Windows masaüstünü aç
+recovery-script = Windows'u geri getirmeyi göster
+remote-title = Kumanda
+remote-move = Hareket
+remote-press = Bas
+remote-type = Yaz
+remote-send = Gönder
+remote-lost = Televizyona ulaşılamıyor. Wi-Fi'yi kontrol et.
+remote-typing = Bir metin kutusu açık. Aşağıya yaz.
+remote-lb = Sol omuz tuşu
+remote-rb = Sağ omuz tuşu
+remote-view = Görünüm
+remote-menu = Menü
+remote-home = Ana sayfa
+remote-pair-title = Telefonunu bağla
+remote-pair-body = Televizyonda görünen altı haneli kodu gir.
+remote-pair-button = Bağlan
+remote-wrong = Bu kod doğru değil.
+remote-wait = Çok fazla deneme. Bir dakika bekle.
+stats-summary = Bu hafta { $week } saat, bu yıl { $year } saat
+voice-listening = Dinliyorum…
+voice-unavailable = Ses kullanılamıyor. Windows ayarlarından konuşmayı aç.
+web-bad-address = Bu adres doğru görünmüyor.
+set-test-versions = Deneme sürümlerini de öner

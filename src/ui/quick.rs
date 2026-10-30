@@ -13,10 +13,11 @@ pub fn Quick() -> Element {
     let shell = use_context::<Shell>();
     let mut mouse = use_signal(|| SHARED.mouse_mode.load(Ordering::Relaxed));
 
-    use_hook(move || {
+    // After the first render, not during it: writing a signal while rendering re-renders in a loop.
+    use_effect(move || {
         let (mut volume, mut brightness) = (shell.volume, shell.brightness);
-        volume.set(audio::volume());
         spawn(async move {
+            volume.set(off_thread(audio::volume).await.flatten());
             brightness.set(off_thread(display::brightness).await.flatten());
         });
     });
@@ -24,9 +25,10 @@ pub fn Quick() -> Element {
     let outside = shell.outside.read().clone();
     let volume = shell.volume.read().unwrap_or(0.0);
     let brightness = *shell.brightness.read();
+    let title = t!("action-menu");
 
     rsx! {
-        div { class: "layer", "data-layer": "quick",
+        div { class: "layer", "data-layer": "quick", role: "dialog", "aria-modal": "true", "aria-label": "{title}",
             div { class: "scrim", onclick: move |_| shell.back() }
             aside { class: "sheet glass lens",
                 div { class: "when",
@@ -63,6 +65,9 @@ pub fn Quick() -> Element {
                     }
                     button { class: "row-btn", "data-nav": "", onclick: move |_| shell.screenshot(),
                         span { class: "start", Icon { name: "camera" } {t!("quick-screenshot")} }
+                    }
+                    button { class: "row-btn", "data-nav": "", onclick: move |_| shell.save_clip(),
+                        span { class: "start", Icon { name: "clip" } {t!("quick-clip")} }
                     }
                     if shell.outside.read().is_some() {
                         button {

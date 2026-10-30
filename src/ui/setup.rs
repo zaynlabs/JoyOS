@@ -23,12 +23,15 @@ pub fn Setup() -> Element {
     let shell = use_context::<Shell>();
     let mut step = use_signal(|| Step::Hello);
     let current = step();
+    // Setup lives outside the language-keyed shell so its step survives a language
+    // change; keying the step on the language redraws its words instead.
+    let lang = *shell.lang.read();
 
     rsx! {
-        div { class: "setup", "data-layer": "setup",
+        div { class: "setup", "data-layer": "setup", role: "dialog", "aria-modal": "true",
             div { class: "aura" }
             for s in [current] {
-                div { key: "{s as u8}", class: "step",
+                div { key: "{s as u8}-{lang}", class: "step",
                     match s {
                         Step::Hello => rsx! {
                             Hello {}

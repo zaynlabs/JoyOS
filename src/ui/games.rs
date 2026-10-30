@@ -1,11 +1,14 @@
 use dioxus::prelude::*;
 
-use super::{Icon, Tile};
+use super::{Icon, Tile, source_label};
 use crate::app::{Filter, Layer, Shell, now};
 use crate::library::{Source, Title};
 use crate::t;
 
 const RECENT_DAYS: i64 = 30;
+
+/// The order the store chips appear in.
+const STORES: &[Source] = &[Source::Steam, Source::Epic, Source::Gog, Source::Ubisoft, Source::Xbox, Source::Rom];
 
 pub fn visible_games(shell: &Shell) -> Vec<Title> {
     let filter = *shell.filter.read();
@@ -17,8 +20,7 @@ pub fn visible_games(shell: &Shell) -> Vec<Title> {
         .iter()
         .filter(|g| match filter {
             Filter::All => true,
-            Filter::Steam => g.source == Source::Steam,
-            Filter::Epic => g.source == Source::Epic,
+            Filter::Source(source) => g.source == source,
             Filter::Recent => shell.last_played(g).is_some_and(|t| now() - t < RECENT_DAYS * 86_400),
         })
         .filter(|g| query.is_empty() || g.name.to_lowercase().contains(&query))
@@ -35,18 +37,16 @@ pub fn Games() -> Element {
     let mut shell = use_context::<Shell>();
     let games = visible_games(&shell);
     let count = games.len();
-    let (has_steam, has_epic) = {
+    // One chip per store that has games, in a fixed order.
+    let present: Vec<Source> = {
         let lib = shell.library.read();
-        (lib.games.iter().any(|g| g.source == Source::Steam), lib.games.iter().any(|g| g.source == Source::Epic))
+        STORES.iter().copied().filter(|s| lib.games.iter().any(|g| g.source == *s)).collect()
     };
     let filter = *shell.filter.read();
     let query = shell.search.read().clone();
     let mut filters = vec![(Filter::All, t!("filter-all"))];
-    if has_steam {
-        filters.push((Filter::Steam, t!("filter-steam")));
-    }
-    if has_epic {
-        filters.push((Filter::Epic, t!("filter-epic")));
+    for source in present {
+        filters.push((Filter::Source(source), source_label(source)));
     }
     filters.push((Filter::Recent, t!("filter-recent")));
 

@@ -7,13 +7,38 @@ use windows::Win32::UI::Accessibility::{
     UIA_EditControlTypeId, UIA_ValuePatternId,
 };
 
+use std::sync::OnceLock;
+use std::sync::mpsc::{Sender, SyncSender, channel, sync_channel};
+use std::time::Duration;
+
+/// One UI Automation thread for the whole run. A hung app can stall it, so askers wait only briefly.
+static ASK: OnceLock<SyncSender<Sender<bool>>> = OnceLock::new();
+
 /// True when keyboard focus (in another app) is on something you can type into.
 pub fn focused() -> bool {
+    let ask = ASK.get_or_init(|| {
+        let (tx, rx) = sync_channel::<Sender<bool>>(1);
+        let _ = std::thread::Builder::new().name("text-field".into()).spawn(move || {
+            let uia = unsafe {
+                let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
+                CoCreateInstance::<_, IUIAutomation>(&CUIAutomation, None, CLSCTX_INPROC_SERVER).ok()
+            };
+            for reply in rx {
+                let _ = reply.send(uia.as_ref().is_some_and(check));
+            }
+        });
+        tx
+    });
+    let (reply, answer) = channel();
+    // A full queue means the thread is still stuck on the last question.
+    if ask.try_send(reply).is_err() {
+        return false;
+    }
+    answer.recv_timeout(Duration::from_millis(500)).unwrap_or(false)
+}
+
+fn check(uia: &IUIAutomation) -> bool {
     unsafe {
-        let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
-        let Ok(uia) = CoCreateInstance::<_, IUIAutomation>(&CUIAutomation, None, CLSCTX_INPROC_SERVER) else {
-            return false;
-        };
         let Ok(el) = uia.GetFocusedElement() else { return false };
         if !el.CurrentIsEnabled().is_ok_and(|b| b.as_bool())
             || el.CurrentProcessId().is_ok_and(|pid| pid as u32 == std::process::id())

@@ -20,7 +20,6 @@ action-menu = मेन्यू
 action-tabs = बदलें
 action-continue = आगे बढ़ें
 action-done = हो गया
-action-cancel = रद्द करें
 games-count = { $count ->
     [one] 1 गेम
    *[other] { $count } गेम
@@ -28,6 +27,7 @@ games-count = { $count ->
 filter-all = सभी
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = हाल में खेले
 games-search = गेम खोजें
 games-none = कुछ नहीं मिला।
@@ -42,10 +42,8 @@ when-days = { $n ->
     [one] 1 दिन पहले
    *[other] { $n } दिन पहले
 }
-apps-title = ऐप
 apps-tip = ऐप में आपका कंट्रोलर माउस की तरह चलता है। वापस आने के लिए Start दबाएँ।
 apps-files = फ़ाइलें
-quick-title = झटपट मेन्यू
 quick-sound = आवाज़
 quick-brightness = रोशनी
 quick-mouse = कंट्रोलर को माउस बनाएँ
@@ -103,3 +101,130 @@ setup-pad-body = आगे बढ़ने के लिए A दबाएँ।
 setup-finding = आपके गेम खोजे जा रहे हैं
 setup-ready = सब तैयार है
 setup-start = चलिए शुरू करें
+
+## देखें
+tab-watch = देखें
+watch-lede = स्ट्रीमिंग और वीडियो फुल स्क्रीन पर। नीचे अपनी साइट जोड़ सकते हैं।
+watch-add = साइट जोड़ें
+action-remove = हटाएँ
+text-type-here = यहाँ लिखें
+key-voice = आवाज़
+toast-clip = पिछले 30 सेकंड सहेज लिए।
+quick-clip = पिछले 30 सेकंड सहेजें
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = क्लासिक
+
+## सेटिंग्स
+set-library = गेम और ऐप
+set-art = गेम की तस्वीरें
+art-on = चालू
+art-off = बंद
+set-rom-add = गेम का फ़ोल्डर जोड़ें
+set-family = परिवार
+family-playing = कौन खेल रहा है
+family-everyone = सभी
+family-add = किसी को जोड़ें
+family-set-pin = PIN लगाएँ
+family-change-pin = PIN बदलें
+family-limit = रोज़ अधिकतम { $minutes } मिनट
+family-no-limit = रोज़ की कोई सीमा नहीं
+stats-week = इस हफ़्ते के घंटे
+stats-year = इस साल के घंटे
+stats-minutes = { $minutes } मिनट
+set-connect = कनेक्शन
+conn-bluetooth = ब्लूटूथ और डिवाइस
+conn-wifi = वाई-फ़ाई
+set-phone = फ़ोन को रिमोट बनाएँ
+phone-open = अपने फ़ोन पर { $address } खोलें
+phone-pin = कोड { $pin } डालें
+set-plugins = एक्सटेंशन
+plugins-open = एक्सटेंशन का फ़ोल्डर खोलें
+set-plan = प्लान
+plan-current = आपका प्लान: { $plan }
+plan-free = मुफ़्त
+plan-plus = JoyOS Plus
+plan-business = बिज़नेस
+plan-enter-key = कुंजी डालें
+plan-activated = { $plan } तैयार है। धन्यवाद!
+plan-bad-key = यह कुंजी काम नहीं करती। जाँचकर फिर से कोशिश करें।
+plan-needs-plus = JoyOS Plus चाहिए
+plan-needs-business = बिज़नेस प्लान चाहिए
+kiosk-make = JoyOS को पूरा डेस्कटॉप बनाएँ
+kiosk-made = तैयार है। पहले दोनों फ़ाइलें पढ़ें, फिर हर एक को एडमिनिस्ट्रेटर के रूप में चलाएँ।
+kiosk-failed = स्क्रिप्ट नहीं बन सकीं।
+set-crash = इस PC पर क्रैश रिपोर्ट सहेजें
+set-crash-note = सिर्फ़ यहीं रहती हैं। कुछ भी नहीं भेजा जाता।
+sync-folder = सेटिंग्स के लिए साझा फ़ोल्डर
+sync-now = सेटिंग अभी कॉपी करें
+sync-pulled = दूसरे PC की सेटिंग्स लागू हो गईं।
+sync-pushed = सेटिंग्स साझा फ़ोल्डर में सहेज दी गईं।
+sync-same = सेटिंग्स पहले से अपडेट हैं।
+sync-failed = साझा फ़ोल्डर तक नहीं पहुँच सके।
+update-address = नए वर्शन का पता
+update-available = JoyOS { $version } आ गया है।
+update-get = { $version } लें
+set-scene = बैकग्राउंड
+scene-still = स्थिर
+scene-aurora = ऑरोरा
+set-contrast = ज़्यादा कंट्रास्ट
+set-text-large = बड़ा टेक्स्ट
+theme-auto = अपने-आप
+pad-battery = कंट्रोलर की बैटरी: { $pct }%
+pad-charging = चार्ज हो रहा है
+member-added = जोड़ दिया गया।
+
+## PIN
+pin-ask = PIN डालें
+pin-set = PIN चुनें
+pin-clear = साफ़ करें
+pin-wrong = यह PIN सही नहीं है।
+pin-saved = PIN सहेज लिया गया।
+pin-switched = { $name } खेल रहे हैं।
+
+## हर गेम की सेटिंग्स और समय सीमा
+profile-default = डिफ़ॉल्ट
+profile-needs-plus = हर गेम की सेटिंग्स के लिए JoyOS Plus चाहिए।
+detail-swap = A और B बदलें
+detail-power = पावर
+power-balanced = संतुलित
+power-performance = परफ़ॉर्मेंस
+power-saver = बैटरी बचत
+toast-time-up = { $name } का आज का समय खत्म हो गया।
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = कवर आर्ट की कुंजी काम नहीं कर रही। सेटिंग में जाँचें।
+key-latin = ABC
+phone-forget = जुड़े फ़ोन भूल जाएँ
+phone-forgot = फ़ोन को नया कोड चाहिए होगा।
+phone-paired = फ़ोन जुड़ गया।
+pin-grown-up = किसी बड़े का PIN डालें
+pin-not-saved = PIN सेव नहीं हुआ। फिर से कोशिश करें।
+pin-typed = 6 में से { $count } अंक
+pin-wait = बहुत सारी कोशिशें। { $seconds } सेकंड रुकें।
+recovery-title = Windows पर वापस
+recovery-body = Windows डेस्कटॉप खोलें, या देखें कि PC फिर से Windows के साथ कैसे शुरू हो।
+recovery-desktop = Windows डेस्कटॉप खोलें
+recovery-script = Windows वापस लाने का तरीका दिखाएँ
+remote-title = रिमोट
+remote-move = हिलाएँ
+remote-press = दबाएँ
+remote-type = लिखें
+remote-send = भेजें
+remote-lost = टीवी से जुड़ाव टूट गया। वाई-फ़ाई जाँचें।
+remote-typing = एक टेक्स्ट बॉक्स खुला है। नीचे लिखें।
+remote-lb = बायाँ बंपर
+remote-rb = दायाँ बंपर
+remote-view = व्यू
+remote-menu = मेनू
+remote-home = होम
+remote-pair-title = अपना फ़ोन जोड़ें
+remote-pair-body = टीवी पर दिख रहा छह अंकों का कोड डालें।
+remote-pair-button = जोड़ें
+remote-wrong = यह कोड सही नहीं है।
+remote-wait = बहुत सारी कोशिशें। एक मिनट रुकें।
+stats-summary = इस हफ़्ते { $week } घंटे, इस साल { $year } घंटे
+voice-listening = सुन रहा है…
+voice-unavailable = आवाज़ उपलब्ध नहीं है। Windows सेटिंग में बोली पहचान चालू करें।
+web-bad-address = यह पता सही नहीं लग रहा।
+set-test-versions = टेस्ट वर्शन भी दिखाएँ

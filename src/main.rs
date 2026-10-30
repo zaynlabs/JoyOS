@@ -1,21 +1,30 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod app;
+mod companion;
+mod crash;
+mod household;
 mod i18n;
 mod input;
+mod kiosk;
 mod library;
+mod license;
 mod osk;
+mod plugins;
 mod protocol;
 mod settings;
+mod sync;
 mod system;
 mod ui;
+mod update;
+mod words;
 
 use dioxus::desktop::tao::window::{Fullscreen, Icon};
 use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
 use image::imageops::FilterType;
 use tracing_subscriber::EnvFilter;
 
-const CSS: &str = include_str!("../assets/css/joy.css");
+const CSS: &str = concat!(include_str!("../assets/css/joy.css"), include_str!("../assets/css/extras.css"));
 const ICON: &[u8] = include_bytes!("../assets/images/icon.png");
 
 fn main() {
@@ -24,9 +33,15 @@ fn main() {
         .init();
 
     let settings = settings::Settings::load();
+    crash::install(settings.crash_reports);
     i18n::set_language(settings.language.as_deref().and_then(i18n::index_of).unwrap_or_else(i18n::detect));
     app::apply_to_input(&settings);
     app::hand_over_input(input::start());
+    if settings.phone_remote
+        && let Some(tx) = input::sender()
+    {
+        companion::start(tx);
+    }
 
     // `--windowed` is handy while working on JoyOS itself.
     let windowed = std::env::args().any(|a| a == "--windowed");
@@ -63,7 +78,7 @@ pub fn config(window: WindowBuilder, background: (u8, u8, u8, u8), head: &str) -
         .with_disable_context_menu(true)
         .with_background_color(background)
         .with_custom_head(format!("<style>{CSS}</style>{head}"))
-        .with_custom_protocol("joy", protocol::handle)
+        .with_asynchronous_custom_protocol("joy", protocol::handle)
         .with_windows_browser_args(browser_args);
     if let Some(dir) = data_dir {
         config = config.with_data_directory(dir);

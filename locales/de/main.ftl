@@ -20,7 +20,6 @@ action-menu = Menü
 action-tabs = Wechseln
 action-continue = Weiter
 action-done = Fertig
-action-cancel = Abbrechen
 games-count = { $count ->
     [one] 1 Spiel
    *[other] { $count } Spiele
@@ -28,6 +27,7 @@ games-count = { $count ->
 filter-all = Alle
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = Zuletzt gespielt
 games-search = Spiel finden
 games-none = Dazu gibt es nichts.
@@ -42,10 +42,8 @@ when-days = { $n ->
     [one] vor 1 Tag
    *[other] vor { $n } Tagen
 }
-apps-title = Apps
 apps-tip = In Apps ist dein Controller eine Maus. Drück Start, um zurückzukommen.
 apps-files = Dateien
-quick-title = Schnellmenü
 quick-sound = Ton
 quick-brightness = Helligkeit
 quick-mouse = Controller als Maus
@@ -103,3 +101,130 @@ setup-pad-body = Drück A, um weiterzumachen. Die Tastatur geht auch.
 setup-finding = Deine Spiele werden gesucht
 setup-ready = Alles bereit
 setup-start = Los geht’s
+
+## Schauen
+tab-watch = Schauen
+watch-lede = Streaming und Videos im Vollbild. Unten kannst du eigene Seiten hinzufügen.
+watch-add = Seite hinzufügen
+action-remove = Entfernen
+text-type-here = Hier eingeben
+key-voice = Sprache
+toast-clip = Die letzten 30 Sekunden sind gespeichert.
+quick-clip = Letzte 30 Sekunden speichern
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = Klassiker
+
+## Einstellungen
+set-library = Spiele und Apps
+set-art = Spielbilder
+art-on = An
+art-off = Aus
+set-rom-add = Spieleordner hinzufügen
+set-family = Familie
+family-playing = Wer spielt
+family-everyone = Alle
+family-add = Person hinzufügen
+family-set-pin = PIN festlegen
+family-change-pin = PIN ändern
+family-limit = Bis zu { $minutes } Min. am Tag
+family-no-limit = Kein Tageslimit
+stats-week = Stunden diese Woche
+stats-year = Stunden dieses Jahr
+stats-minutes = { $minutes } Min.
+set-connect = Verbindungen
+conn-bluetooth = Bluetooth und Geräte
+conn-wifi = WLAN
+set-phone = Handy als Fernbedienung nutzen
+phone-open = Öffne auf deinem Handy { $address }
+phone-pin = Gib den Code { $pin } ein
+set-plugins = Erweiterungen
+plugins-open = Erweiterungsordner öffnen
+set-plan = Tarif
+plan-current = Dein Tarif: { $plan }
+plan-free = Kostenlos
+plan-plus = JoyOS Plus
+plan-business = Business
+plan-enter-key = Schlüssel eingeben
+plan-activated = { $plan } ist bereit. Danke!
+plan-bad-key = Dieser Schlüssel funktioniert nicht. Prüfe ihn und versuch es erneut.
+plan-needs-plus = Benötigt JoyOS Plus
+plan-needs-business = Benötigt den Business-Tarif
+kiosk-make = JoyOS als ganzen Desktop einrichten
+kiosk-made = Fertig. Lies beide Dateien und führ dann jede als Administrator aus.
+kiosk-failed = Die Skripte konnten nicht erstellt werden.
+set-crash = Absturzberichte auf diesem PC speichern
+set-crash-note = Sie bleiben hier. Es wird nichts gesendet.
+sync-folder = Gemeinsamer Ordner für Einstellungen
+sync-now = Einstellungen jetzt kopieren
+sync-pulled = Einstellungen vom anderen PC übernommen.
+sync-pushed = Einstellungen im gemeinsamen Ordner gespeichert.
+sync-same = Die Einstellungen sind schon aktuell.
+sync-failed = Der gemeinsame Ordner ist nicht erreichbar.
+update-address = Adresse für neue Versionen
+update-available = JoyOS { $version } ist da.
+update-get = { $version } holen
+set-scene = Hintergrund
+scene-still = Ruhig
+scene-aurora = Polarlicht
+set-contrast = Stärkerer Kontrast
+set-text-large = Größere Schrift
+theme-auto = Automatisch
+pad-battery = Controller-Akku: { $pct } %
+pad-charging = Lädt
+member-added = Hinzugefügt.
+
+## PIN
+pin-ask = PIN eingeben
+pin-set = PIN wählen
+pin-clear = Löschen
+pin-wrong = Das ist nicht die PIN.
+pin-saved = PIN gespeichert.
+pin-switched = { $name } spielt.
+
+## Einstellungen pro Spiel und Zeitlimits
+profile-default = Standard
+profile-needs-plus = Einstellungen pro Spiel brauchen JoyOS Plus.
+detail-swap = A und B tauschen
+detail-power = Energie
+power-balanced = Ausgewogen
+power-performance = Leistung
+power-saver = Stromsparen
+toast-time-up = Die Spielzeit von { $name } für heute ist vorbei.
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = Der Schlüssel für Cover funktioniert nicht. Prüf ihn in den Einstellungen.
+key-latin = ABC
+phone-forget = Verbundene Handys vergessen
+phone-forgot = Handys brauchen jetzt den neuen Code.
+phone-paired = Handy verbunden.
+pin-grown-up = Bitte die PIN eines Erwachsenen
+pin-not-saved = Die PIN wurde nicht gespeichert. Versuch es noch mal.
+pin-typed = { $count } von 6 Ziffern
+pin-wait = Zu viele Versuche. Warte { $seconds } Sekunden.
+recovery-title = Zurück zu Windows
+recovery-body = Öffne den Windows-Desktop oder sieh nach, wie der PC wieder mit Windows startet.
+recovery-desktop = Windows-Desktop öffnen
+recovery-script = Zeigen, wie Windows zurückkommt
+remote-title = Fernbedienung
+remote-move = Bewegen
+remote-press = Drücken
+remote-type = Tippen
+remote-send = Senden
+remote-lost = Keine Verbindung zum Fernseher. Prüf das WLAN.
+remote-typing = Ein Textfeld ist offen. Tipp unten.
+remote-lb = Linke Schultertaste
+remote-rb = Rechte Schultertaste
+remote-view = Ansicht
+remote-menu = Menü
+remote-home = Start
+remote-pair-title = Handy verbinden
+remote-pair-body = Gib den sechsstelligen Code vom Fernseher ein.
+remote-pair-button = Verbinden
+remote-wrong = Der Code stimmt nicht.
+remote-wait = Zu viele Versuche. Warte eine Minute.
+stats-summary = { $week } Stunden diese Woche, { $year } Stunden dieses Jahr
+voice-listening = Ich höre zu…
+voice-unavailable = Sprache ist nicht verfügbar. Schalte die Spracherkennung in den Windows-Einstellungen ein.
+web-bad-address = Diese Adresse sieht nicht richtig aus.
+set-test-versions = Auch Testversionen anbieten

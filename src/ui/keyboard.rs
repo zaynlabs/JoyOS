@@ -1,10 +1,12 @@
-//! On-screen keyboard for searching. It follows the current language's layout,
-//! with a switch to Latin letters since most game names use them.
+//! On-screen keyboard for searching and for short text entries (a web address,
+//! a name, a license key). It follows the current language's layout, with a
+//! switch to Latin letters since most game names use them.
 
 use dioxus::prelude::*;
 
-use crate::app::Shell;
-use crate::{i18n, t};
+use super::Icon;
+use crate::app::{Shell, TextFor};
+use crate::{i18n, t, words};
 
 use layout::{LATIN, has_own_script, native_rows, script_sample};
 
@@ -94,26 +96,58 @@ pub fn backspace(shell: Shell) {
     search.write().pop();
 }
 
+/// Replaces the word being typed with `word`.
+fn complete(shell: Shell, word: &str) {
+    let mut search = shell.search;
+    let fragment_len = words::fragment(&search.read()).chars().count();
+    let mut text = search.write();
+    for _ in 0..fragment_len {
+        text.pop();
+    }
+    text.push_str(word);
+    text.push(' ');
+}
+
 #[component]
-pub fn Keyboard() -> Element {
+pub fn Keyboard(#[props(default)] target: Option<TextFor>) -> Element {
     let shell = use_context::<Shell>();
     let mut search = shell.search;
     let code = i18n::current().code;
     let mut latin = use_signal(|| false);
     let rows: &[&str] = if has_own_script(code) && latin() { LATIN } else { native_rows(code).unwrap_or(LATIN) };
     let query = search.read().clone();
+    let suggestions = words::suggest(&shell.settings.read().words, words::fragment(&query));
+    // Only searches teach the suggestions; a web address or a license key isn't a word to remember.
+    let done = {
+        let target = target.clone();
+        move |_| match target.clone() {
+            Some(target) => shell.finish_text(target),
+            None => {
+                shell.remember_words(&search.read());
+                shell.back();
+            }
+        }
+    };
+    let placeholder = if target.is_some() { t!("text-type-here") } else { t!("games-search") };
 
     rsx! {
-        div { class: "layer", "data-layer": "keyboard",
+        div { class: "layer", "data-layer": "keyboard", role: "dialog", "aria-modal": "true", "aria-label": "{placeholder}",
             div { class: "scrim", onclick: move |_| shell.back() }
             div { class: "keyboard glass",
-                div { class: "typed",
+                div { class: "typed", role: "textbox", "aria-live": "polite", "aria-label": "{placeholder}",
                     if query.is_empty() {
-                        span { class: "ph", {t!("games-search")} }
+                        span { class: "ph", "{placeholder}" }
                     } else {
                         "{query}"
                     }
                     span { class: "caret" }
+                }
+                if !suggestions.is_empty() {
+                    div { class: "suggest", "data-row": "suggest",
+                        for word in suggestions {
+                            button { class: "chip", "data-nav": "", "data-sound": "tick", onclick: move |_| complete(shell, &word), "{word}" }
+                        }
+                    }
                 }
                 div { class: "keys",
                     div { class: "krow", "data-row": "digits",
@@ -131,12 +165,15 @@ pub fn Keyboard() -> Element {
                     div { class: "krow", "data-row": "actions",
                         if has_own_script(code) {
                             button { class: "key wide", "data-nav": "", onclick: move |_| latin.set(!latin()),
-                                if latin() { {script_sample(code)} } else { "ABC" }
+                                if latin() { {script_sample(code)} } else { {t!("key-latin")} }
                             }
+                        }
+                        button { class: "key wide", "data-nav": "", "aria-label": t!("key-voice"), onclick: move |_| shell.voice(),
+                            Icon { name: "mic" }
                         }
                         button { class: "key space", "data-nav": "", onclick: move |_| search.write().push(' '), {t!("key-space")} }
                         button { class: "key wide", "data-nav": "", "data-sound": "back", onclick: move |_| backspace(shell), {t!("key-delete")} }
-                        button { class: "key wide on", "data-nav": "", onclick: move |_| shell.back(), {t!("action-done")} }
+                        button { class: "key wide on", "data-nav": "", onclick: done, {t!("action-done")} }
                     }
                 }
             }

@@ -20,7 +20,6 @@ action-menu = Menu
 action-tabs = Changer
 action-continue = Continuer
 action-done = Terminé
-action-cancel = Annuler
 games-count = { $count ->
     [one] 1 jeu
    *[other] { $count } jeux
@@ -28,6 +27,7 @@ games-count = { $count ->
 filter-all = Tous
 filter-steam = Steam
 filter-epic = Epic
+filter-gog = GOG
 filter-recent = Joués récemment
 games-search = Trouver un jeu
 games-none = Rien ne correspond.
@@ -42,10 +42,8 @@ when-days = { $n ->
     [one] il y a 1 jour
    *[other] il y a { $n } jours
 }
-apps-title = Apps
 apps-tip = Dans les apps, la manette sert de souris. Appuyez sur Start pour revenir.
 apps-files = Fichiers
-quick-title = Menu rapide
 quick-sound = Son
 quick-brightness = Luminosité
 quick-mouse = Manette comme souris
@@ -103,3 +101,130 @@ setup-pad-body = Appuyez sur A pour continuer. Le clavier marche aussi.
 setup-finding = Recherche de vos jeux
 setup-ready = Tout est prêt
 setup-start = C’est parti
+
+## Regarder
+tab-watch = Regarder
+watch-lede = Streaming et vidéos en plein écran. Ajoute tes propres sites plus bas.
+watch-add = Ajouter un site
+action-remove = Retirer
+text-type-here = Écris ici
+key-voice = Voix
+toast-clip = Les 30 dernières secondes sont enregistrées.
+quick-clip = Enregistrer les 30 dernières secondes
+filter-ubisoft = Ubisoft
+filter-xbox = Xbox
+filter-roms = Classiques
+
+## Réglages
+set-library = Jeux et applis
+set-art = Images des jeux
+art-on = Activées
+art-off = Désactivées
+set-rom-add = Ajouter un dossier de jeux
+set-family = Famille
+family-playing = Qui joue
+family-everyone = Tout le monde
+family-add = Ajouter quelqu'un
+family-set-pin = Définir un code
+family-change-pin = Changer le code
+family-limit = Jusqu'à { $minutes } min par jour
+family-no-limit = Pas de limite par jour
+stats-week = heures cette semaine
+stats-year = heures cette année
+stats-minutes = { $minutes } min
+set-connect = Connexions
+conn-bluetooth = Bluetooth et appareils
+conn-wifi = Wi-Fi
+set-phone = Utiliser un téléphone comme télécommande
+phone-open = Sur ton téléphone, ouvre { $address }
+phone-pin = Saisis le code { $pin }
+set-plugins = Modules complémentaires
+plugins-open = Ouvrir le dossier des modules
+set-plan = Offre
+plan-current = Ton offre : { $plan }
+plan-free = Gratuite
+plan-plus = JoyOS Plus
+plan-business = Pro
+plan-enter-key = Saisir une clé
+plan-activated = { $plan } est prêt. Merci !
+plan-bad-key = Cette clé ne fonctionne pas. Vérifie-la et réessaie.
+plan-needs-plus = Nécessite JoyOS Plus
+plan-needs-business = Nécessite l'offre Pro
+kiosk-make = Installer JoyOS comme bureau complet
+kiosk-made = C'est prêt. Lis les deux fichiers, puis lance chacun en tant qu'administrateur.
+kiosk-failed = Impossible de créer les scripts.
+set-crash = Garder les rapports d'erreur sur ce PC
+set-crash-note = Ils restent ici. Rien n'est envoyé.
+sync-folder = Dossier partagé pour les réglages
+sync-now = Copier les réglages maintenant
+sync-pulled = Réglages mis à jour depuis ton autre PC.
+sync-pushed = Réglages enregistrés dans le dossier partagé.
+sync-same = Les réglages sont déjà à jour.
+sync-failed = Impossible d'accéder au dossier partagé.
+update-address = Adresse des nouvelles versions
+update-available = JoyOS { $version } est disponible.
+update-get = Obtenir { $version }
+set-scene = Arrière-plan
+scene-still = Fixe
+scene-aurora = Aurore
+set-contrast = Contraste renforcé
+set-text-large = Texte plus grand
+theme-auto = Auto
+pad-battery = Batterie de la manette : { $pct } %
+pad-charging = En charge
+member-added = Ajouté.
+
+## Code PIN
+pin-ask = Saisis le code
+pin-set = Choisis un code
+pin-clear = Effacer
+pin-wrong = Ce n'est pas le bon code.
+pin-saved = Code enregistré.
+pin-switched = { $name } joue.
+
+## Réglages par jeu et limites de temps
+profile-default = Par défaut
+profile-needs-plus = Les réglages par jeu nécessitent JoyOS Plus.
+detail-swap = Inverser A et B
+detail-power = Énergie
+power-balanced = Équilibré
+power-performance = Performance
+power-saver = Économie d'énergie
+toast-time-up = Le temps de { $name } pour aujourd'hui est écoulé.
+
+# Review fixes: remote, recovery, voice, PIN safety
+art-bad-key = La clé des jaquettes ne marche pas. Vérifie-la dans les Réglages.
+key-latin = ABC
+phone-forget = Oublier les téléphones
+phone-forgot = Les téléphones devront entrer le nouveau code.
+phone-paired = Téléphone connecté.
+pin-grown-up = Le code d'un adulte, s'il te plaît
+pin-not-saved = Impossible d'enregistrer le code. Réessaie.
+pin-typed = { $count } chiffres sur 6
+pin-wait = Trop d'essais. Attends { $seconds } secondes.
+recovery-title = Retour à Windows
+recovery-body = Ouvre le bureau Windows, ou vois comment faire redémarrer le PC sur Windows.
+recovery-desktop = Ouvrir le bureau Windows
+recovery-script = Voir comment remettre Windows
+remote-title = Télécommande
+remote-move = Bouger
+remote-press = Appuyer
+remote-type = Écrire
+remote-send = Envoyer
+remote-lost = La télé ne répond plus. Vérifie le Wi-Fi.
+remote-typing = Une zone de texte est ouverte. Écris ci-dessous.
+remote-lb = Gâchette haute gauche
+remote-rb = Gâchette haute droite
+remote-view = Affichage
+remote-menu = Menu
+remote-home = Accueil
+remote-pair-title = Connecte ton téléphone
+remote-pair-body = Entre le code à six chiffres affiché sur la télé.
+remote-pair-button = Connecter
+remote-wrong = Ce code n'est pas le bon.
+remote-wait = Trop d'essais. Attends une minute.
+stats-summary = { $week } heures cette semaine, { $year } heures cette année
+voice-listening = J'écoute…
+voice-unavailable = La voix n'est pas disponible. Active la voix dans les paramètres de Windows.
+web-bad-address = Cette adresse ne semble pas correcte.
+set-test-versions = Proposer aussi les versions d'essai

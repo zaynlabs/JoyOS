@@ -119,6 +119,15 @@ pub fn translate_in(index: usize, key: &str) -> String {
         .unwrap_or_else(|| key.to_owned())
 }
 
+/// A number with `places` decimals, written the way the current language writes them (1,5 or 1.5).
+pub fn decimal(value: f64, places: usize) -> String {
+    let text = format!("{value:.places$}");
+    match current().code {
+        "de" | "es" | "fr" | "it" | "pt-BR" | "ru" | "tr" => text.replace('.', ","),
+        _ => text,
+    }
+}
+
 pub fn args<'a>(pairs: impl IntoIterator<Item = (&'a str, FluentValue<'a>)>) -> FluentArgs<'a> {
     let mut args = FluentArgs::new();
     for (k, v) in pairs {

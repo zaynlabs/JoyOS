@@ -84,6 +84,11 @@ fn force_front(hwnd: HWND) {
         if IsIconic(hwnd).as_bool() {
             let _ = ShowWindow(hwnd, SW_RESTORE);
         }
+        // Already in front: the Alt tap would land on this very window and open its
+        // menu mode, which stalls the page until another key is pressed.
+        if GetForegroundWindow() == hwnd {
+            return;
+        }
         super::inject::key(VK_MENU, true);
         super::inject::key(VK_MENU, false);
         let _ = SetForegroundWindow(hwnd);
